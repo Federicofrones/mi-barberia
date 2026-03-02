@@ -58,7 +58,7 @@ export default function DashboardPage() {
 
             {loading ? <p>Generando reporte...</p> : (
                 <>
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
                         <Card>
                             <h3 className="text-xs text-gray-500 font-medium">Turnos Completados</h3>
                             <p className="text-2xl font-bold">{stats?.appointments?.done || 0}</p>
@@ -82,36 +82,38 @@ export default function DashboardPage() {
                     {(!barberStats || barberStats.length === 0) ? (
                         <p className="text-gray-500">No hay métricas de barberos para la fecha solicitada.</p>
                     ) : (
-                        <Card className="overflow-hidden p-0 border-gray-200">
-                            <table className="w-full text-left text-sm border-collapse">
-                                <thead className="bg-gray-50">
-                                    <tr className="border-b">
-                                        <th className="py-3 px-4 font-semibold text-gray-600">Barbero</th>
-                                        <th className="py-3 px-4 font-semibold text-gray-600 text-right">Turnos</th>
-                                        <th className="py-3 px-4 font-semibold text-gray-600 text-right">Generado (Neto)</th>
-                                        <th className="py-3 px-4 font-semibold text-gray-600 text-right">Comisión a Pagar</th>
-                                        <th className="py-3 px-4 font-semibold text-gray-600 text-right">% Revenue</th>
-                                        <th className="py-3 px-4 font-semibold text-gray-600 text-right text-green-700 bg-green-50 border-l">Profit Real</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="divide-y divide-gray-100">
-                                    {barberStats.map((b, idx) => {
-                                        const totalRevenue = stats?.revenue?.net || 0;
-                                        const revPct = totalRevenue > 0 ? ((b.revenueNet / totalRevenue) * 100).toFixed(1) : "0";
+                        <Card className="p-0 border-gray-200">
+                            <div className="overflow-x-auto">
+                                <table className="w-full text-left text-sm border-collapse min-w-[600px]">
+                                    <thead className="bg-gray-50">
+                                        <tr className="border-b">
+                                            <th className="py-3 px-4 font-semibold text-gray-600">Barbero</th>
+                                            <th className="py-3 px-4 font-semibold text-gray-600 text-right">Turnos</th>
+                                            <th className="py-3 px-4 font-semibold text-gray-600 text-right">Generado (Neto)</th>
+                                            <th className="py-3 px-4 font-semibold text-gray-600 text-right">Comisión a Pagar</th>
+                                            <th className="py-3 px-4 font-semibold text-gray-600 text-right">% Revenue</th>
+                                            <th className="py-3 px-4 font-semibold text-gray-600 text-right text-green-700 bg-green-50 border-l">Profit Real</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y divide-gray-100">
+                                        {barberStats.map((b, idx) => {
+                                            const totalRevenue = stats?.revenue?.net || 0;
+                                            const revPct = totalRevenue > 0 ? ((b.revenueNet / totalRevenue) * 100).toFixed(1) : "0";
 
-                                        return (
-                                            <tr key={b.barberId || `idx-${idx}`} className="hover:bg-gray-50 transition-colors">
-                                                <td className="py-3 px-4 font-medium">{b.barberName || 'Desconocido'}</td>
-                                                <td className="py-3 px-4 text-right">{b.doneCount || 0}</td>
-                                                <td className="py-3 px-4 text-right">${b.revenueNet || 0}</td>
-                                                <td className="py-3 px-4 text-right font-medium text-amber-700">${b.commissionTotal || 0}</td>
-                                                <td className="py-3 px-4 text-right font-medium text-gray-500">{revPct}%</td>
-                                                <td className="py-3 px-4 text-right font-bold text-green-700 bg-green-50 border-l">${b.profitNet || 0}</td>
-                                            </tr>
-                                        );
-                                    })}
-                                </tbody>
-                            </table>
+                                            return (
+                                                <tr key={b.barberId || `idx-${idx}`} className="hover:bg-gray-50 transition-colors">
+                                                    <td className="py-3 px-4 font-medium">{b.barberName || 'Desconocido'}</td>
+                                                    <td className="py-3 px-4 text-right">{b.doneCount || 0}</td>
+                                                    <td className="py-3 px-4 text-right">${b.revenueNet || 0}</td>
+                                                    <td className="py-3 px-4 text-right font-medium text-amber-700">${b.commissionTotal || 0}</td>
+                                                    <td className="py-3 px-4 text-right font-medium text-gray-500">{revPct}%</td>
+                                                    <td className="py-3 px-4 text-right font-bold text-green-700 bg-green-50 border-l">${b.profitNet || 0}</td>
+                                                </tr>
+                                            );
+                                        })}
+                                    </tbody>
+                                </table>
+                            </div>
                         </Card>
                     )}
                 </>

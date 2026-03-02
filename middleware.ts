@@ -7,7 +7,7 @@ export async function middleware(request: NextRequest) {
     const pathname = request.nextUrl.pathname;
 
     // Exclude login
-    if (pathname.startsWith('/admin') && pathname !== '/login') {
+    if (pathname.startsWith('/admin') && pathname !== '/login' && pathname !== '/admin/setup') {
         const session = await getSession(request);
 
         if (!session) {

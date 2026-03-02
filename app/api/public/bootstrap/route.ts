@@ -13,7 +13,7 @@ export async function GET() {
         const [shopSnap, servicesSnap, barbersSnap] = await Promise.all([
             shopRef.get(),
             shopRef.collection('services').where('isActive', '==', true).get(),
-            shopRef.collection('barbers').where('isActive', '==', true).orderBy('order', 'asc').limit(6).get() // Max 6 actives
+            shopRef.collection('barbers').where('isActive', '==', true).limit(6).get() // Max 6 actives
         ]);
 
         if (!shopSnap.exists) {
@@ -23,7 +23,10 @@ export async function GET() {
         const shop = shopSnap.data() as ShopConfig;
 
         const services = servicesSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Service[];
-        const barbers = barbersSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })) as Barber[];
+        const barbers = barbersSnap.docs.map(doc => ({ id: doc.id, ...doc.data() })) as any[];
+
+        // Sort in memory to avoid index requirements
+        barbers.sort((a, b) => (a.order || 0) - (b.order || 0));
 
         return NextResponse.json({
             shop,

@@ -1,10 +1,11 @@
 import * as admin from 'firebase-admin';
 
 if (!admin.apps.length) {
-    const projectId = process.env.FIREBASE_ADMIN_PROJECT_ID;
-    const clientEmail = process.env.FIREBASE_ADMIN_CLIENT_EMAIL;
+    const projectId = process.env.FIREBASE_PROJECT_ID || process.env.FIREBASE_ADMIN_PROJECT_ID;
+    const clientEmail = process.env.FIREBASE_CLIENT_EMAIL || process.env.FIREBASE_ADMIN_CLIENT_EMAIL;
     // Handle newlines in private keys
-    const privateKey = process.env.FIREBASE_ADMIN_PRIVATE_KEY?.replace(/\\n/g, '\n');
+    const rawKey = process.env.FIREBASE_PRIVATE_KEY || process.env.FIREBASE_ADMIN_PRIVATE_KEY;
+    const privateKey = rawKey?.replace(/\\n/g, '\n');
 
     try {
         if (projectId && clientEmail && privateKey) {

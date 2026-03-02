@@ -118,8 +118,14 @@ export default function StaffPage() {
                                     {b.isActive ? 'Activo' : 'Inactivo'}
                                 </span>
                             </div>
-                            <p className="text-sm text-gray-500 mb-4">Comisión: {b.commission.type === 'percentage' ? `${b.commission.value}%` : `$${b.commission.value} fijo`} {b.commission.includeTips && '+ tip'}</p>
-                            <Button variant="outline" className="text-sm py-1.5" onClick={() => setEditing(b)}>Editar Perfil</Button>
+                            <p className="text-sm text-gray-500 mb-4">
+                                Comisión: {b.commission?.type === 'percentage' ? `${b.commission?.value}%` : `$${b.commission?.value} fijo`} {b.commission?.includeTips && '+ tip'}
+                            </p>
+                            <Button variant="outline" className="text-sm py-1.5" onClick={() => setEditing({
+                                ...b,
+                                commission: b.commission || { type: 'percentage', value: 50, includeTips: true },
+                                workingHours: b.workingHours || {}
+                            })}>Editar Perfil</Button>
                         </Card>
                     ))}
                 </div>

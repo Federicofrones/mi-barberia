@@ -28,7 +28,7 @@ export const Input = ({ label, ...props }: any) => {
     );
 };
 
-export const Select = ({ label, options, ...props }: any) => {
+export const Select = ({ label, options, children, ...props }: any) => {
     return (
         <div className="flex flex-col gap-1 w-full">
             {label && <label className="text-sm font-medium text-gray-700">{label}</label>}
@@ -36,10 +36,14 @@ export const Select = ({ label, options, ...props }: any) => {
                 className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:border-black focus:ring-1 focus:ring-black"
                 {...props}
             >
-                <option value="" disabled>Seleccionar</option>
-                {options.map((o: any) => (
-                    <option key={o.value} value={o.value}>{o.label}</option>
-                ))}
+                {options ? (
+                    <>
+                        <option value="" disabled>Seleccionar</option>
+                        {options.map((o: any) => (
+                            <option key={o.value} value={o.value}>{o.label}</option>
+                        ))}
+                    </>
+                ) : children}
             </select>
         </div>
     );

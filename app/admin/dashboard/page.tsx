@@ -21,8 +21,8 @@ export default function DashboardPage() {
                 const dailyData = await dailyRes.json();
                 const barberData = await barberRes.json();
 
-                setStats(dailyData.stats);
-                setBarberStats(barberData.stats);
+                setStats(dailyData?.stats || null);
+                setBarberStats(barberData?.stats || []);
             } catch (e) {
                 console.error(e);
             } finally {
@@ -64,7 +64,7 @@ export default function DashboardPage() {
 
                     <h2 className="text-xl font-bold mt-10 mb-4">Participación por Barbero</h2>
 
-                    {barberStats.length === 0 ? (
+                    {(!barberStats || barberStats.length === 0) ? (
                         <p className="text-gray-500">No hay métricas de barberos para la fecha solicitada.</p>
                     ) : (
                         <Card className="overflow-hidden p-0 border-gray-200">
@@ -75,22 +75,23 @@ export default function DashboardPage() {
                                         <th className="py-3 px-4 font-semibold text-gray-600 text-right">Turnos</th>
                                         <th className="py-3 px-4 font-semibold text-gray-600 text-right">Generado (Neto)</th>
                                         <th className="py-3 px-4 font-semibold text-gray-600 text-right">Comisión a Pagar</th>
-                                        <th className="py-3 px-4 font-semibold text-gray-600 text-right" title="Porcentaje que trajo frente al total de hoy">% Revenue</th>
-                                        <th className="py-3 px-4 font-semibold text-gray-600 text-right text-green-700 bg-green-50 border-l" title="Ganancia libre que dejó este barbero al negocio">Profit Real</th>
+                                        <th className="py-3 px-4 font-semibold text-gray-600 text-right">% Revenue</th>
+                                        <th className="py-3 px-4 font-semibold text-gray-600 text-right text-green-700 bg-green-50 border-l">Profit Real</th>
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-100">
                                     {barberStats.map(b => {
-                                        const revPct = stats?.revenue?.net > 0 ? ((b.revenueNet / stats.revenue.net) * 100).toFixed(1) : 0;
+                                        const totalRevenue = stats?.revenue?.net || 0;
+                                        const revPct = totalRevenue > 0 ? ((b.revenueNet / totalRevenue) * 100).toFixed(1) : "0";
 
                                         return (
-                                            <tr key={b.barberId} className="hover:bg-gray-50 transition-colors">
-                                                <td className="py-3 px-4 font-medium">{b.barberName}</td>
-                                                <td className="py-3 px-4 text-right">{b.doneCount}</td>
-                                                <td className="py-3 px-4 text-right">${b.revenueNet}</td>
-                                                <td className="py-3 px-4 text-right font-medium text-amber-700">${b.commissionTotal}</td>
+                                            <tr key={b.barberId || Math.random().toString()} className="hover:bg-gray-50 transition-colors">
+                                                <td className="py-3 px-4 font-medium">{b.barberName || 'Desconocido'}</td>
+                                                <td className="py-3 px-4 text-right">{b.doneCount || 0}</td>
+                                                <td className="py-3 px-4 text-right">${b.revenueNet || 0}</td>
+                                                <td className="py-3 px-4 text-right font-medium text-amber-700">${b.commissionTotal || 0}</td>
                                                 <td className="py-3 px-4 text-right font-medium text-gray-500">{revPct}%</td>
-                                                <td className="py-3 px-4 text-right font-bold text-green-700 bg-green-50 border-l">${b.profitNet}</td>
+                                                <td className="py-3 px-4 text-right font-bold text-green-700 bg-green-50 border-l">${b.profitNet || 0}</td>
                                             </tr>
                                         );
                                     })}

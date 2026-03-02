@@ -4,12 +4,20 @@ import { useEffect, useState } from 'react';
 import { Card, Input } from '@/components/ui';
 
 export default function DashboardPage() {
-    const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
+    const [date, setDate] = useState("");
     const [stats, setStats] = useState<any>(null);
     const [barberStats, setBarberStats] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
+    const [mounted, setMounted] = useState(false);
 
     useEffect(() => {
+        setMounted(true);
+        setDate(new Date().toISOString().split('T')[0]);
+    }, []);
+
+    useEffect(() => {
+        if (!date) return;
+
         const fetchAllStats = async () => {
             setLoading(true);
             try {
@@ -17,6 +25,11 @@ export default function DashboardPage() {
                     fetch(`/api/admin/daily-stats?dateKey=${date}`),
                     fetch(`/api/admin/barber-stats?dateKey=${date}`)
                 ]);
+
+                if (!dailyRes.ok || !barberRes.ok) {
+                    console.error("Failed to fetch stats");
+                    return;
+                }
 
                 const dailyData = await dailyRes.json();
                 const barberData = await barberRes.json();
@@ -31,6 +44,8 @@ export default function DashboardPage() {
         };
         fetchAllStats();
     }, [date]);
+
+    if (!mounted) return null;
 
     return (
         <div className="space-y-6 max-w-5xl">
@@ -80,12 +95,12 @@ export default function DashboardPage() {
                                     </tr>
                                 </thead>
                                 <tbody className="divide-y divide-gray-100">
-                                    {barberStats.map(b => {
+                                    {barberStats.map((b, idx) => {
                                         const totalRevenue = stats?.revenue?.net || 0;
                                         const revPct = totalRevenue > 0 ? ((b.revenueNet / totalRevenue) * 100).toFixed(1) : "0";
 
                                         return (
-                                            <tr key={b.barberId || Math.random().toString()} className="hover:bg-gray-50 transition-colors">
+                                            <tr key={b.barberId || `idx-${idx}`} className="hover:bg-gray-50 transition-colors">
                                                 <td className="py-3 px-4 font-medium">{b.barberName || 'Desconocido'}</td>
                                                 <td className="py-3 px-4 text-right">{b.doneCount || 0}</td>
                                                 <td className="py-3 px-4 text-right">${b.revenueNet || 0}</td>

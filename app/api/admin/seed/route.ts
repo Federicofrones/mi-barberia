@@ -64,15 +64,15 @@ export async function POST(request: Request) {
         let uid = "";
         try {
             const userRecord = await adminAuth.createUser({
-                email: 'admin@barberia.com',
-                password: 'Password123!',
-                displayName: 'Administrador'
+                email: 'ficofrones@gmail.com',
+                password: 'FedericoFrones2026',
+                displayName: 'Fico'
             });
             uid = userRecord.uid;
             await shopRef.collection('admins').doc(uid).set({ createdAt: new Date() });
         } catch (e: any) {
             if (e.code === 'auth/email-already-exists') {
-                const user = await adminAuth.getUserByEmail('admin@barberia.com');
+                const user = await adminAuth.getUserByEmail('ficofrones@gmail.com');
                 await shopRef.collection('admins').doc(user.uid).set({ createdAt: new Date() });
             } else {
                 console.error("Auth creation failed:", e.message);

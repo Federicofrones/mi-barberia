@@ -3,7 +3,10 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { Calendar, Users, Briefcase, Settings, LogOut, LayoutDashboard, DollarSign, Menu, X } from 'lucide-react';
+import {
+    Calendar, Users, Briefcase, Settings, LogOut,
+    LayoutDashboard, DollarSign, Menu, X, Scissors
+} from 'lucide-react';
 
 export default function AdminNav() {
     const pathname = usePathname();
@@ -29,11 +32,16 @@ export default function AdminNav() {
     return (
         <>
             {/* Mobile Header */}
-            <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-gray-200 flex items-center justify-between px-4 z-50">
-                <h1 className="text-lg font-bold">Barbería Admin</h1>
+            <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-zinc-100 flex items-center justify-between px-6 z-50">
+                <div className="flex items-center gap-2">
+                    <div className="bg-black p-1.5 rounded-lg">
+                        <Scissors className="w-5 h-5 text-white" />
+                    </div>
+                    <h1 className="text-xl font-black tracking-tighter">BARBER PRO</h1>
+                </div>
                 <button
                     onClick={() => setIsOpen(!isOpen)}
-                    className="p-2 text-gray-600 hover:bg-gray-100 rounded-md"
+                    className="p-2 text-zinc-600 hover:bg-zinc-100 rounded-xl transition-all"
                 >
                     {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                 </button>
@@ -42,22 +50,27 @@ export default function AdminNav() {
             {/* Overlay */}
             {isOpen && (
                 <div
-                    className="fixed inset-0 bg-black/50 z-40 lg:hidden"
+                    className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
                     onClick={() => setIsOpen(false)}
                 />
             )}
 
             {/* Sidebar */}
             <aside className={`
-                w-64 bg-gray-50 border-r border-gray-200 h-full flex flex-col fixed inset-y-0 left-0 z-40
-                transition-transform duration-300 transform
+                w-72 bg-zinc-950 text-white h-full flex flex-col fixed inset-y-0 left-0 z-40
+                transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) transform border-r border-white/5
                 ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
             `}>
-                <div className="p-4 border-b border-gray-200 hidden lg:block">
-                    <h1 className="text-xl font-bold tracking-tight">Barbería Admin</h1>
+                <div className="p-8 hidden lg:block">
+                    <div className="flex items-center gap-3">
+                        <div className="bg-white p-2 rounded-xl">
+                            <Scissors className="w-6 h-6 text-black" />
+                        </div>
+                        <h1 className="text-2xl font-black tracking-tighter">BARBER PRO</h1>
+                    </div>
                 </div>
 
-                <nav className="flex-1 p-4 pt-20 lg:pt-4 space-y-1 overflow-y-auto">
+                <nav className="flex-1 px-4 py-24 lg:py-4 space-y-1.5 overflow-y-auto">
                     {menu.map((item) => {
                         const active = pathname === item.href;
                         return (
@@ -65,24 +78,30 @@ export default function AdminNav() {
                                 key={item.href}
                                 href={item.href}
                                 onClick={() => setIsOpen(false)}
-                                className={`flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors ${active ? 'bg-black text-white' : 'text-gray-600 hover:bg-gray-200'
+                                className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all duration-300 group
+                                    ${active
+                                        ? 'bg-white text-black shadow-xl shadow-white/5'
+                                        : 'text-zinc-500 hover:text-white hover:bg-white/5'
                                     }`}
                             >
-                                <item.icon className="w-4 h-4" />
+                                <item.icon className={`w-5 h-5 transition-transform duration-500 ${active ? 'scale-110' : 'group-hover:scale-110'}`} />
                                 {item.label}
                             </Link>
                         );
                     })}
                 </nav>
 
-                <div className="p-4 border-t border-gray-200">
+                <div className="p-6">
                     <button
                         onClick={handleLogout}
-                        className="flex items-center gap-2 px-3 py-2 w-full text-left rounded-md text-sm font-medium text-red-600 hover:bg-red-50 transition-colors"
+                        className="flex items-center gap-3 px-4 py-4 w-full text-left rounded-2xl text-sm font-bold text-red-400 bg-red-500/5 hover:bg-red-500/10 hover:text-red-300 transition-all duration-300 border border-red-500/20"
                     >
-                        <LogOut className="w-4 h-4" />
-                        Salir
+                        <LogOut className="w-5 h-5" />
+                        Cerrar Sesión
                     </button>
+                    <p className="text-[10px] text-zinc-600 font-bold mt-6 text-center uppercase tracking-widest">
+                        v2.1 Premium Admin
+                    </p>
                 </div>
             </aside>
         </>

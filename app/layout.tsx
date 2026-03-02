@@ -1,12 +1,12 @@
 import type { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Outfit } from 'next/font/google';
 import '../styles/globals.css';
 
-const inter = Inter({ subsets: ['latin'] });
+const outfit = Outfit({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-    title: 'Barbería Profesional',
-    description: 'Reserva tu turno en nuestra Barbería Profesional',
+    title: 'Barbería Pro | Admin',
+    description: 'Gestión profesional de barberías',
 };
 
 export default function RootLayout({
@@ -15,8 +15,10 @@ export default function RootLayout({
     children: React.ReactNode;
 }) {
     return (
-        <html lang="es">
-            <body className={`${inter.className} min-h-screen bg-white`}>{children}</body>
+        <html lang="es" className="scroll-smooth">
+            <body className={`${outfit.className} antialiased min-h-screen bg-white text-zinc-900`}>
+                {children}
+            </body>
         </html>
     );
 }

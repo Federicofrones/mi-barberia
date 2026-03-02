@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Card, Button, Input } from '@/components/ui';
 
 export default function CashierPage() {
@@ -8,17 +8,17 @@ export default function CashierPage() {
     const [stats, setStats] = useState<any>(null);
     const [loading, setLoading] = useState(false);
 
-    const fetchStats = async () => {
+    const fetchStats = useCallback(async () => {
         setLoading(true);
         const res = await fetch(`/api/admin/daily-stats?dateKey=${date}`);
         const data = await res.json();
         setStats(data.stats);
         setLoading(false);
-    };
+    }, [date]);
 
     useEffect(() => {
         fetchStats();
-    }, [date]);
+    }, [fetchStats]);
 
     return (
         <div className="space-y-6 max-w-4xl">

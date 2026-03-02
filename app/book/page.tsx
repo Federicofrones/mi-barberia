@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, Suspense } from 'react';
+import { useEffect, useState, Suspense, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Card, Button, Select, Input } from '@/components/ui';
 
@@ -36,7 +36,7 @@ function BookWizardContent() {
             .finally(() => setLoading(false));
     }, []);
 
-    const loadSlots = async () => {
+    const loadSlots = useCallback(async () => {
         if (!selectedService || !selectedBarber || !selectedDate) return;
         setLoading(true);
         try {
@@ -49,14 +49,14 @@ function BookWizardContent() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [selectedBarber, selectedDate, selectedService]);
 
     useEffect(() => {
         if (step === 3 && selectedDate) {
             loadSlots();
             setSelectedSlot('');
         }
-    }, [step, selectedDate]);
+    }, [step, selectedDate, loadSlots]);
 
     const handleBooking = async () => {
         setLoading(true);

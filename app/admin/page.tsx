@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Card, Input } from '@/components/ui';
 import DayCalendar from '@/components/calendar/DayCalendar';
 
@@ -10,7 +10,7 @@ export default function CalendarPage() {
     const [barbers, setBarbers] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         setLoading(true);
         try {
             const [apptRes, barberRes] = await Promise.all([
@@ -27,11 +27,11 @@ export default function CalendarPage() {
         } finally {
             setLoading(false);
         }
-    };
+    }, [date]);
 
     useEffect(() => {
         fetchData();
-    }, [date]);
+    }, [fetchData]);
 
     return (
         <div className="space-y-4 max-w-7xl h-[calc(100vh-4rem)] flex flex-col">

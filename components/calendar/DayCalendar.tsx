@@ -63,7 +63,12 @@ export default function DayCalendar({ barbers, appointments, dateKey, onRefresh 
                     {(isMobile ? barbers.filter(b => b.id === selectedBarberId) : barbers).map(barber => (
                         <div key={barber.id} className="min-w-full lg:min-w-[220px] border-r border-white/5 bg-black">
                             {/* Header (Desktop only or sticky) */}
-                            <div className="hidden lg:flex h-12 border-b border-white/5 bg-zinc-900/50 backdrop-blur-md items-center justify-center font-black text-[10px] uppercase tracking-widest sticky top-0 z-10 text-[#D4AF37]">
+                            <div className="hidden lg:flex h-16 border-b border-white/5 bg-zinc-900/50 backdrop-blur-md items-center justify-center gap-3 font-black text-[10px] uppercase tracking-[0.2em] sticky top-0 z-10 text-[#D4AF37]">
+                                <div className={`w-8 h-8 rounded-full overflow-hidden flex items-center justify-center text-[10px] border border-[#D4AF37]/20 ${barber.photoUrl ? '' : 'bg-zinc-800 text-zinc-500'}`}>
+                                    {barber.photoUrl ? (
+                                        <img src={barber.photoUrl} alt={barber.displayName} className="w-full h-full object-cover" />
+                                    ) : (barber.displayName?.charAt(0))}
+                                </div>
                                 {barber.displayName}
                             </div>
 

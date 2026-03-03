@@ -165,9 +165,11 @@ function BookWizardContent() {
                                             className={`group relative p-4 rounded-[2rem] border transition-all duration-300 text-center
                                                 ${selectedBarber === b.id ? 'bg-[#D4AF37] border-[#D4AF37] shadow-xl shadow-[#D4AF37]/10' : 'bg-black/20 border-white/5 hover:border-white/10'}`}
                                         >
-                                            <div className={`w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center text-xl font-black transition-colors
+                                            <div className={`w-12 h-12 mx-auto mb-3 rounded-full flex items-center justify-center text-xl font-black transition-colors overflow-hidden
                                                 ${selectedBarber === b.id ? 'bg-black text-[#D4AF37]' : 'bg-zinc-800 text-zinc-500 group-hover:bg-zinc-700'}`}>
-                                                {b.displayName.charAt(0)}
+                                                {b.photoUrl ? (
+                                                    <img src={b.photoUrl} alt={b.displayName} className="w-full h-full object-cover" />
+                                                ) : b.displayName.charAt(0)}
                                             </div>
                                             <p className={`text-xs font-black uppercase tracking-widest transition-colors ${selectedBarber === b.id ? 'text-black' : 'text-zinc-400'}`}>
                                                 {b.displayName.split(' ')[0]}

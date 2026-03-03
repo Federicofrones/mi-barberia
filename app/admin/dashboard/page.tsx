@@ -7,6 +7,7 @@ export default function DashboardPage() {
     const [date, setDate] = useState("");
     const [stats, setStats] = useState<any>(null);
     const [barberStats, setBarberStats] = useState<any[]>([]);
+    const [barberInfos, setBarberInfos] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
     const [mounted, setMounted] = useState(false);
 
@@ -33,6 +34,11 @@ export default function DashboardPage() {
 
                 const dailyData = await dailyRes.json();
                 const barberData = await barberRes.json();
+
+                // Join with barber info for photos
+                const barbersRes = await fetch('/api/admin/barbers');
+                const barbersData = await barbersRes.json();
+                setBarberInfos(barbersData.barbers || []);
 
                 setStats(dailyData?.stats || null);
                 setBarberStats(barberData?.stats || []);
@@ -99,10 +105,18 @@ export default function DashboardPage() {
                                         {barberStats.map((b, idx) => {
                                             const totalRevenue = stats?.revenue?.net || 0;
                                             const revPct = totalRevenue > 0 ? ((b.revenueNet / totalRevenue) * 100).toFixed(1) : "0";
+                                            const info = barberInfos.find(bi => bi.id === b.barberId);
 
                                             return (
                                                 <tr key={b.barberId || `idx-${idx}`} className="hover:bg-gray-50 transition-colors">
-                                                    <td className="py-3 px-4 font-medium">{b.barberName || 'Desconocido'}</td>
+                                                    <td className="py-3 px-4 font-medium flex items-center gap-3">
+                                                        <div className={`w-8 h-8 rounded-full overflow-hidden flex items-center justify-center text-[10px] font-black shrink-0 ${info?.photoUrl ? '' : 'bg-gray-200 text-gray-500'}`}>
+                                                            {info?.photoUrl ? (
+                                                                <img src={info.photoUrl} alt={b.barberName} className="w-full h-full object-cover" />
+                                                            ) : (b.barberName?.charAt(0))}
+                                                        </div>
+                                                        {b.barberName || 'Desconocido'}
+                                                    </td>
                                                     <td className="py-3 px-4 text-right">{b.doneCount || 0}</td>
                                                     <td className="py-3 px-4 text-right">${b.revenueNet || 0}</td>
                                                     <td className="py-3 px-4 text-right font-medium text-amber-700">${b.commissionTotal || 0}</td>

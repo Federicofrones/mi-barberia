@@ -49,6 +49,7 @@ export default function StaffPage() {
     const createNew = () => {
         setEditing({
             displayName: '',
+            photoUrl: '',
             isActive: true,
             order: barbers.length + 1,
             commission: { type: 'percentage', value: 50, includeTips: true },
@@ -94,21 +95,26 @@ export default function StaffPage() {
             {editing && (
                 <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center p-4">
                     <Card className="w-full max-w-2xl bg-zinc-900 border border-white/10 shadow-3xl animate-in fade-in zoom-in duration-300 max-h-[90vh] overflow-y-auto">
-                        <div className="p-2">
-                            <div className="flex justify-between items-center mb-8">
-                                <h2 className="text-2xl font-black text-white flex items-center gap-3">
-                                    <Settings2 className="w-6 h-6 text-[#D4AF37]" />
-                                    {editing.id ? 'Editar Barbero' : 'Nuevo Registro'}
+                        <div className="p-6 md:p-10">
+                            <div className="flex justify-between items-center mb-10">
+                                <h2 className="text-3xl font-black text-white italic tracking-tighter uppercase">
+                                    {editing.id ? 'Ficha de Barbero' : 'Nuevo Registro Elite'}
                                 </h2>
-                                <button onClick={() => setEditing(null)} className="p-2 hover:bg-white/5 rounded-full transition-colors text-zinc-500 hover:text-white">
-                                    <XCircle className="w-8 h-8" />
+                                <button
+                                    onClick={() => setEditing(null)}
+                                    className="p-3 bg-zinc-800/50 hover:bg-zinc-800 rounded-full transition-all text-zinc-500 hover:text-white"
+                                >
+                                    <XCircle className="w-6 h-6" />
                                 </button>
                             </div>
 
-                            <form onSubmit={handleSave} className="space-y-8">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    <div className="space-y-6">
-                                        <h3 className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Perfil Público</h3>
+                            <form onSubmit={handleSave} className="space-y-10 pb-4">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                                    <div className="space-y-8">
+                                        <h3 className="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.3em] inline-flex items-center gap-2">
+                                            <div className="w-1 h-3 bg-[#D4AF37] rounded-full" />
+                                            Perfil Público
+                                        </h3>
                                         <Input
                                             label="Nombre Artístico"
                                             placeholder="Ej. Tony 'Blade' Romano"
@@ -116,9 +122,15 @@ export default function StaffPage() {
                                             onChange={(e: any) => setEditing({ ...editing, displayName: e.target.value })}
                                             required
                                         />
+                                        <Input
+                                            label="Imagen (URL)"
+                                            placeholder="https://..."
+                                            value={editing.photoUrl || ''}
+                                            onChange={(e: any) => setEditing({ ...editing, photoUrl: e.target.value })}
+                                        />
                                         <div className="grid grid-cols-2 gap-4">
                                             <Input
-                                                label="Orden"
+                                                label="Orden en Lista"
                                                 type="number"
                                                 value={editing.order}
                                                 onChange={(e: any) => setEditing({ ...editing, order: Number(e.target.value) })}
@@ -135,8 +147,11 @@ export default function StaffPage() {
                                         </div>
                                     </div>
 
-                                    <div className="space-y-6">
-                                        <h3 className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Finanzas</h3>
+                                    <div className="space-y-8">
+                                        <h3 className="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.3em] inline-flex items-center gap-2">
+                                            <div className="w-1 h-3 bg-[#D4AF37] rounded-full" />
+                                            Finanzas & Comisión
+                                        </h3>
                                         <Select
                                             label="Tipo de Pago"
                                             value={editing.commission.type}
@@ -165,18 +180,30 @@ export default function StaffPage() {
                                     </div>
                                 </div>
 
-                                <div className="bg-[#D4AF37]/5 p-6 rounded-[2rem] border border-[#D4AF37]/10 flex items-start gap-4">
-                                    <div className="p-2 bg-[#D4AF37] rounded-xl">
+                                <div className="bg-[#D4AF37]/5 p-6 rounded-[2rem] border border-[#D4AF37]/10 flex items-start gap-4 shadow-inner">
+                                    <div className="p-2.5 bg-[#D4AF37] rounded-[1rem] shadow-lg shadow-[#D4AF37]/20">
                                         <Shield className="w-5 h-5 text-black" />
                                     </div>
-                                    <p className="text-xs text-[#D4AF37] font-medium leading-relaxed">
-                                        Los horarios de trabajo y configuración avanzada se sincronizan automáticamente con la agenda global.
+                                    <p className="text-[11px] text-[#D4AF37] font-bold leading-relaxed uppercase tracking-wider">
+                                        El horario de trabajo y bloqueos de agenda se gestionan <br /> automáticamente desde la configuración global.
                                     </p>
                                 </div>
 
-                                <div className="flex gap-4 justify-end pt-6 border-t border-white/5 bg-zinc-900 sticky bottom-0">
-                                    <Button type="button" variant="outline" onClick={() => setEditing(null)} className="px-10">Cancelar</Button>
-                                    <Button type="submit" className="px-12 bg-[#D4AF37] text-black hover:bg-[#F1D279] shadow-[#D4AF37]/20">Guardar Cambios</Button>
+                                <div className="flex flex-col sm:flex-row gap-4 pt-10 border-t border-white/5">
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={() => setEditing(null)}
+                                        className="py-5 border-zinc-800 text-zinc-500 hover:text-white"
+                                    >
+                                        Cancelar
+                                    </Button>
+                                    <Button
+                                        type="submit"
+                                        className="py-5 bg-[#D4AF37] text-black font-black uppercase text-xs tracking-widest shadow-2xl shadow-[#D4AF37]/20"
+                                    >
+                                        Guardar Cambios
+                                    </Button>
                                 </div>
                             </form>
                         </div>
@@ -185,6 +212,7 @@ export default function StaffPage() {
             )}
 
             {/* List Section */}
+
             {loading ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {[1, 2, 3].map(i => (
@@ -209,15 +237,21 @@ export default function StaffPage() {
 
                             <div className="relative flex justify-between items-start mb-8">
                                 <div className="flex items-center gap-5">
-                                    <div className={`w-16 h-16 rounded-[1.5rem] flex items-center justify-center text-2xl font-black shadow-2xl ${b.isActive ? 'bg-[#D4AF37] text-black shadow-[#D4AF37]/20' : 'bg-zinc-800 text-zinc-500'}`}>
-                                        {b.displayName.charAt(0)}
+                                    <div className={`w-16 h-16 rounded-[1.5rem] flex items-center justify-center text-2xl font-black shadow-2xl overflow-hidden ${b.isActive ? 'bg-[#D4AF37] text-black shadow-[#D4AF37]/20' : 'bg-zinc-800 text-zinc-500'}`}>
+                                        {b.photoUrl ? (
+                                            <img src={b.photoUrl} alt={b.displayName} className="w-full h-full object-cover" />
+                                        ) : b.displayName.charAt(0)}
                                     </div>
                                     <div>
                                         <h3 className="font-black text-2xl text-white leading-tight tracking-tight">{b.displayName}</h3>
                                         <div className="flex items-center gap-2 mt-2">
-                                            {b.isActive ? (
-                                                <span className="px-3 py-1 bg-green-500/10 text-green-400 text-[9px] font-black uppercase tracking-widest rounded-full flex items-center gap-1">
-                                                    <CheckCircle2 className="w-3 h-3" /> Online
+                                            {b.isShiftActive ? (
+                                                <span className="px-3 py-1 bg-[#D4AF37]/20 text-[#D4AF37] text-[9px] font-black uppercase tracking-widest rounded-full flex items-center gap-1 shadow-lg shadow-[#D4AF37]/5">
+                                                    <div className="w-1.5 h-1.5 bg-[#D4AF37] rounded-full animate-pulse" /> Disponible
+                                                </span>
+                                            ) : b.isActive ? (
+                                                <span className="px-3 py-1 bg-zinc-800 text-zinc-500 text-[9px] font-black uppercase tracking-widest rounded-full flex items-center gap-1">
+                                                    <div className="w-1.5 h-1.5 bg-zinc-700 rounded-full" /> Fuera de Turno
                                                 </span>
                                             ) : (
                                                 <span className="px-3 py-1 bg-red-500/10 text-red-500 text-[9px] font-black uppercase tracking-widest rounded-full flex items-center gap-1">
@@ -261,7 +295,8 @@ export default function StaffPage() {
                         </div>
                     ))}
                 </div>
-            )}
-        </div>
+            )
+            }
+        </div >
     );
 }

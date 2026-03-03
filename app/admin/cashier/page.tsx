@@ -29,8 +29,8 @@ export default function CashierPage() {
                         <Wallet className="w-6 h-6 text-black" />
                     </div>
                     <div>
-                        <h1 className="text-3xl font-black tracking-tighter text-white">Cajón Diario</h1>
-                        <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest mt-1">Reporte de Caja</p>
+                        <h1 className="text-3xl font-black tracking-tighter text-white">Caja</h1>
+                        <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest mt-1">Reporte Diario</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -60,7 +60,7 @@ export default function CashierPage() {
                         <div className="absolute top-0 right-0 p-4 opacity-20 group-hover:scale-110 transition-transform">
                             <Wallet className="w-20 h-20" />
                         </div>
-                        <h3 className="text-[10px] font-black uppercase tracking-widest text-black/50 mb-1">Caja (Efectivo)</h3>
+                        <h3 className="text-[10px] font-black uppercase tracking-widest text-black/50 mb-1">Efectivo en Caja</h3>
                         <p className="text-4xl font-black tracking-tighter">${stats.paymentMethods?.cash || 0}</p>
                         <div className="mt-6 pt-6 border-t border-black/10 text-[10px] font-bold space-y-2 opacity-70">
                             <div className="flex justify-between">

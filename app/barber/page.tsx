@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect, useState, useCallback } from 'react';
-import { Card, Input } from '@/components/ui';
+import { Card, Input, Button } from '@/components/ui';
 import DayCalendar from '@/components/calendar/DayCalendar';
-import { Calendar as CalendarIcon, Scissors, User, DollarSign, CheckCircle, Award } from 'lucide-react';
+import { Calendar as CalendarIcon, Scissors, User, DollarSign, CheckCircle, Award, Star, Power } from 'lucide-react';
 
 export default function BarberDashboard() {
     const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
@@ -11,6 +11,8 @@ export default function BarberDashboard() {
     const [stats, setStats] = useState<any>(null);
     const [me, setMe] = useState<any>(null);
     const [loading, setLoading] = useState(true);
+    const [isShiftActive, setIsShiftActive] = useState(false);
+    const [loadingShift, setLoadingShift] = useState(false);
 
     const fetchData = useCallback(async () => {
         setLoading(true);
@@ -19,11 +21,13 @@ export default function BarberDashboard() {
             const meRes = await fetch('/api/auth/me');
             const meData = await meRes.json();
             setMe(meData.user);
+            setIsShiftActive(meData.user?.isShiftActive || false);
 
             if (meData.user?.barberId || meData.user?.role === 'admin') {
                 const bId = meData.user.barberId;
 
-                // 2. Get my appointments
+                // 2. Get my appointments (Simulate ID if admin)
+                const targetId = bId || 'all';
                 const apptRes = await fetch(`/api/barber/appointments?dateKey=${date}`);
                 const apptData = await apptRes.json();
                 setAppointments(apptData.appointments || []);
@@ -39,6 +43,24 @@ export default function BarberDashboard() {
             setLoading(false);
         }
     }, [date]);
+
+    const toggleShift = async () => {
+        setLoadingShift(true);
+        try {
+            const res = await fetch('/api/barber/shift', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ active: !isShiftActive })
+            });
+            if (res.ok) {
+                setIsShiftActive(!isShiftActive);
+            }
+        } catch (e) {
+            console.error(e);
+        } finally {
+            setLoadingShift(false);
+        }
+    };
 
     useEffect(() => {
         fetchData();
@@ -59,12 +81,30 @@ export default function BarberDashboard() {
                         <p className="text-zinc-500 text-[9px] font-black uppercase tracking-[0.3em] mt-1">Portal de Barbero Elite</p>
                     </div>
                 </div>
-                <Input
-                    type="date"
-                    value={date}
-                    onChange={(e: any) => setDate(e.target.value)}
-                    className="w-full md:w-auto min-w-[200px]"
-                />
+                <div className="flex items-center gap-3">
+                    <Button
+                        onClick={toggleShift}
+                        disabled={loadingShift}
+                        className={`w-auto px-6 py-3 text-[10px] font-black uppercase tracking-widest transition-all duration-500
+                            ${isShiftActive
+                                ? 'bg-zinc-800 text-red-500 border border-red-500/20 shadow-none'
+                                : 'bg-[#D4AF37] text-black shadow-lg shadow-[#D4AF37]/20'}`}
+                    >
+                        {loadingShift ? (
+                            <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+                        ) : isShiftActive ? (
+                            <><Power className="w-4 h-4" /> Finalizar Turno</>
+                        ) : (
+                            <><Power className="w-4 h-4" /> Iniciar Turno</>
+                        )}
+                    </Button>
+                    <Input
+                        type="date"
+                        value={date}
+                        onChange={(e: any) => setDate(e.target.value)}
+                        className="w-full md:w-auto min-w-[200px]"
+                    />
+                </div>
             </div>
 
             {/* Quick Stats Grid */}

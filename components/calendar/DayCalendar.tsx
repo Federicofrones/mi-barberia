@@ -14,6 +14,14 @@ interface DayCalendarProps {
 export default function DayCalendar({ barbers, appointments, dateKey, onRefresh }: DayCalendarProps) {
     const [selectedAppt, setSelectedAppt] = useState<any>(null);
     const [selectedBarberId, setSelectedBarberId] = useState<string | null>(null);
+    const [isMobile, setIsMobile] = useState(false);
+
+    useEffect(() => {
+        const checkMobile = () => setIsMobile(window.innerWidth < 1024);
+        checkMobile();
+        window.addEventListener('resize', checkMobile);
+        return () => window.removeEventListener('resize', checkMobile);
+    }, []);
 
     useEffect(() => {
         if (barbers.length > 0 && !selectedBarberId) {
@@ -27,32 +35,32 @@ export default function DayCalendar({ barbers, appointments, dateKey, onRefresh 
     const PIXELS_PER_MINUTE = 2;
     const hoursLength = END_HOUR - START_HOUR;
 
-    const visibleBarbers = barbers.filter(b => selectedBarberId ? b.id === selectedBarberId : true);
-
     return (
         <div className="w-full h-full relative bg-black flex flex-col overflow-hidden">
             {/* Mobile Barber Selector */}
-            <div className="lg:hidden flex items-center gap-2 p-2 overflow-x-auto bg-zinc-900/50 border-b border-white/5 shrink-0 no-scrollbar">
-                {barbers.map(barber => (
-                    <button
-                        key={barber.id}
-                        onClick={() => setSelectedBarberId(barber.id)}
-                        className={`px-4 py-2 rounded-2xl text-xs font-black uppercase tracking-tighter whitespace-nowrap transition-all
-                            ${selectedBarberId === barber.id
-                                ? 'bg-[#D4AF37] text-black shadow-lg shadow-[#D4AF37]/20'
-                                : 'bg-zinc-800 text-zinc-400'}`}
-                    >
-                        {barber.displayName}
-                    </button>
-                ))}
-            </div>
+            {isMobile && barbers.length > 1 && (
+                <div className="flex items-center gap-2 p-2 overflow-x-auto bg-zinc-900/50 border-b border-white/5 shrink-0 no-scrollbar">
+                    {barbers.map(barber => (
+                        <button
+                            key={barber.id}
+                            onClick={() => setSelectedBarberId(barber.id)}
+                            className={`px-4 py-2 rounded-2xl text-xs font-black uppercase tracking-tighter whitespace-nowrap transition-all
+                                ${selectedBarberId === barber.id
+                                    ? 'bg-[#D4AF37] text-black shadow-lg shadow-[#D4AF37]/20'
+                                    : 'bg-zinc-800 text-zinc-400'}`}
+                        >
+                            {barber.displayName}
+                        </button>
+                    ))}
+                </div>
+            )}
 
             <div className="flex-1 overflow-auto flex relative">
                 <TimeColumn startHour={START_HOUR} endHour={END_HOUR} pixelsPerMinute={PIXELS_PER_MINUTE} />
 
                 {/* Desktop View: All Barbers | Mobile View: Selected Barber */}
                 <div className="flex relative flex-1 lg:min-w-max">
-                    {(window.innerWidth < 1024 ? visibleBarbers : barbers).map(barber => (
+                    {(isMobile ? barbers.filter(b => b.id === selectedBarberId) : barbers).map(barber => (
                         <div key={barber.id} className="min-w-full lg:min-w-[220px] border-r border-white/5 bg-black">
                             {/* Header (Desktop only or sticky) */}
                             <div className="hidden lg:flex h-12 border-b border-white/5 bg-zinc-900/50 backdrop-blur-md items-center justify-center font-black text-[10px] uppercase tracking-widest sticky top-0 z-10 text-[#D4AF37]">

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import {
     Calendar, Users, Briefcase, Settings, LogOut,
-    LayoutDashboard, DollarSign, Menu, X, Scissors
+    LayoutDashboard, DollarSign, Menu, X, Scissors, Globe
 } from 'lucide-react';
 
 export default function AdminNav() {
@@ -21,12 +21,13 @@ export default function AdminNav() {
 
     const menu = [
         { label: 'Agenda', icon: Calendar, href: '/admin' },
-        { label: 'Cajón', icon: DollarSign, href: '/admin/cashier' },
+        { label: 'Caja', icon: DollarSign, href: '/admin/cashier' },
         { label: 'Métricas', icon: LayoutDashboard, href: '/admin/dashboard' },
         { label: 'Turnos', icon: Calendar, href: '/admin/appointments' },
+        { label: 'Estilo', icon: Globe, href: '/admin/branding' },
         { label: 'Barberos', icon: Users, href: '/admin/staff' },
-        { label: 'Servicios', icon: Briefcase, href: '/admin/services' },
-        { label: 'Setup', icon: Settings, href: '/admin/setup' },
+        { label: 'Servicios', icon: Scissors, href: '/admin/services' },
+        { label: 'Config', icon: Settings, href: '/admin/setup' },
     ];
 
     return (

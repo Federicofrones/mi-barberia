@@ -80,69 +80,94 @@ export default function AppointmentsPage() {
                 </div>
             </div>
 
-            <Card className="p-0 overflow-hidden bg-zinc-900/40 border border-white/5 backdrop-blur-3xl rounded-[2.5rem] shadow-2xl">
-                <div className="overflow-x-auto">
-                    <table className="w-full text-left text-sm border-collapse">
-                        <thead>
-                            <tr className="bg-white/5 border-b border-white/5">
-                                <th className="py-6 px-8 text-[10px] font-black uppercase text-zinc-500 tracking-[0.2em]">Hora</th>
-                                <th className="py-6 px-8 text-[10px] font-black uppercase text-zinc-500 tracking-[0.2em]">Servicio</th>
-                                <th className="py-6 px-8 text-[10px] font-black uppercase text-zinc-500 tracking-[0.2em]">Barbero</th>
-                                <th className="py-6 px-8 text-[10px] font-black uppercase text-zinc-500 tracking-[0.2em]">Cliente</th>
-                                <th className="py-6 px-8 text-[10px] font-black uppercase text-zinc-500 tracking-[0.2em] text-right">Estado</th>
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-white/5">
-                            {loading ? (
-                                <tr><td colSpan={5} className="text-center py-20 text-zinc-600 font-bold italic animate-pulse">Sincronizando base de datos...</td></tr>
-                            ) : appointments.length === 0 ? (
-                                <tr>
-                                    <td colSpan={5} className="text-center py-32">
-                                        <div className="flex flex-col items-center gap-4">
-                                            <Calendar className="w-12 h-12 text-zinc-800" />
-                                            <p className="text-zinc-500 font-bold uppercase tracking-widest text-xs">No hay actividad para este día</p>
-                                        </div>
-                                    </td>
-                                </tr>
-                            ) : (
-                                appointments.map(a => (
-                                    <tr key={a.id} className="hover:bg-white/5 transition-all duration-300 group">
-                                        <td className="py-6 px-8 font-black text-white group-hover:text-[#D4AF37] transition-colors">{formatTime(a)}</td>
-                                        <td className="py-6 px-8">
-                                            <div className="flex items-center gap-3">
-                                                <div className="p-2 bg-zinc-800 rounded-lg group-hover:bg-[#D4AF37] group-hover:text-black transition-all">
-                                                    <Scissors className="w-3.5 h-3.5" />
-                                                </div>
-                                                <span className="font-bold text-zinc-300">{a.serviceName}</span>
-                                            </div>
-                                        </td>
-                                        <td className="py-6 px-8">
-                                            <div className="flex items-center gap-2 text-zinc-400 font-medium">
-                                                <User className="w-4 h-4 text-zinc-600" />
-                                                {a.barberName}
-                                            </div>
-                                        </td>
-                                        <td className="py-6 px-8">
-                                            <div className="font-black text-white">{a.clientName}</div>
-                                            <div className="text-[10px] font-bold text-zinc-600 tracking-wider mt-1">{a.clientPhone}</div>
-                                        </td>
-                                        <td className="py-6 px-8 text-right">
-                                            <span className={`px-4 py-1.5 text-[9px] font-black uppercase tracking-widest rounded-full shadow-lg
-                                                ${a.status === 'done' ? 'bg-zinc-800 text-[#D4AF37] shadow-[#D4AF37]/5' :
-                                                    a.status === 'pending' ? 'bg-amber-500/10 text-amber-500' :
-                                                        a.status === 'cancelled' ? 'bg-red-500/10 text-red-500' :
-                                                            a.status === 'confirmed' ? 'bg-[#D4AF37] text-black shadow-[#D4AF37]/20' : 'bg-zinc-800 text-zinc-500'}`}
-                                            >
-                                                {a.status || 'pendiente'}
-                                            </span>
-                                        </td>
-                                    </tr>
-                                ))
-                            )}
-                        </tbody>
-                    </table>
+            {loading ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {[1, 2, 3, 4, 5, 6].map(i => (
+                        <div key={i} className="h-64 bg-zinc-900/50 rounded-[2.5rem] animate-pulse" />
+                    ))}
                 </div>
-            </Card>
+            ) : appointments.length === 0 ? (
+                <Card className="py-32 text-center border-dashed border-white/5 bg-zinc-900/20">
+                    <div className="flex flex-col items-center gap-6">
+                        <div className="p-5 bg-zinc-800/50 rounded-full">
+                            <Calendar className="w-12 h-12 text-zinc-600" />
+                        </div>
+                        <div>
+                            <p className="text-zinc-500 font-black uppercase tracking-[0.2em] text-sm">Silencio en la Barbería</p>
+                            <p className="text-zinc-700 text-xs font-bold mt-2">No hay turnos registrados para esta fecha.</p>
+                        </div>
+                    </div>
+                </Card>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {appointments.map(a => {
+                        const statusColors = {
+                            done: { bg: 'bg-zinc-900', text: 'text-zinc-500', accent: 'bg-[#D4AF37]' },
+                            pending: { bg: 'bg-amber-500/10', text: 'text-amber-500', accent: 'bg-amber-500' },
+                            cancelled: { bg: 'bg-red-500/10', text: 'text-red-500', accent: 'bg-red-500' },
+                            confirmed: { bg: 'bg-[#D4AF37]/10', text: 'text-[#D4AF37]', accent: 'bg-[#D4AF37]' }
+                        };
+                        const config = statusColors[a.status as keyof typeof statusColors] || statusColors.pending;
+
+                        return (
+                            <div
+                                key={a.id}
+                                className={`group relative bg-zinc-900/40 border border-white/5 rounded-[2.5rem] p-6 transition-all duration-500 hover:bg-zinc-900 hover:scale-[1.02] shadow-2xl overflow-hidden ${a.status === 'cancelled' ? 'opacity-50 grayscale' : ''}`}
+                            >
+                                {/* Time Badge */}
+                                <div className="flex justify-between items-start mb-6">
+                                    <div className="flex items-center gap-2 px-4 py-2 bg-black rounded-2xl border border-white/5 shadow-inner">
+                                        <Clock className="w-3.5 h-3.5 text-[#D4AF37]" />
+                                        <span className="font-black text-white text-xs">{formatTime(a)}</span>
+                                    </div>
+                                    <div className={`px-4 py-2 rounded-2xl text-[9px] font-black uppercase tracking-widest shadow-xl ${config.bg} ${config.text} border border-current opacity-80`}>
+                                        {a.status || 'pendiente'}
+                                    </div>
+                                </div>
+
+                                {/* Service Info */}
+                                <div className="space-y-4 mb-8">
+                                    <div className="flex items-center gap-4">
+                                        <div className={`p-3 rounded-2xl ${config.accent} text-black shadow-lg shadow-black/20`}>
+                                            <Scissors className="w-5 h-5" />
+                                        </div>
+                                        <div>
+                                            <h3 className="font-black text-lg text-white leading-none capitalize group-hover:text-[#D4AF37] transition-colors">
+                                                {a.serviceName}
+                                            </h3>
+                                            <p className="text-[10px] font-bold text-zinc-500 uppercase tracking-widest mt-1.5 flex items-center gap-1.5">
+                                                <User className="w-3 h-3" /> Con {a.barberName}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Client Details */}
+                                <div className="pt-6 border-t border-white/5 flex items-center justify-between">
+                                    <div className="flex items-center gap-3">
+                                        <div className="w-10 h-10 bg-zinc-800 rounded-full flex items-center justify-center font-black text-xs text-zinc-400">
+                                            {a.clientName?.charAt(0)}
+                                        </div>
+                                        <div>
+                                            <p className="text-sm font-black text-zinc-200">{a.clientName}</p>
+                                            <p className="text-[10px] font-bold text-zinc-600 tracking-wider font-mono">{a.clientPhone}</p>
+                                        </div>
+                                    </div>
+
+                                    {a.status === 'confirmed' && (
+                                        <div className="p-2.5 bg-green-500/10 text-green-500 rounded-xl">
+                                            <CheckCircle2 className="w-4 h-4" />
+                                        </div>
+                                    )}
+                                </div>
+
+                                {/* Decorative Gradient */}
+                                <div className="absolute -bottom-10 -right-10 w-40 h-40 bg-[#D4AF37]/5 rounded-full blur-[80px] pointer-events-none group-hover:bg-[#D4AF37]/10 transition-colors duration-700" />
+                            </div>
+                        );
+                    })}
+                </div>
+            )}
         </div>
     );
 }

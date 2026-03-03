@@ -11,8 +11,8 @@ export default function TimeColumn({ startHour, endHour, pixelsPerMinute }: Time
 
     return (
         <div className="w-16 flex-shrink-0 border-r border-white/5 bg-black sticky left-0 z-20">
-            <div className="h-12 border-b border-white/5 bg-zinc-900/50 flex items-center justify-center font-black text-[9px] text-zinc-600 uppercase tracking-tighter">
-                GMT-3
+            <div className="h-12 border-b border-white/5 bg-zinc-900/50 flex items-center justify-center font-black text-[9px] text-[#D4AF37] uppercase tracking-widest">
+                Hora
             </div>
             <div className="relative" style={{ height: (endHour - startHour) * 60 * pixelsPerMinute }}>
                 {hours.map(h => (

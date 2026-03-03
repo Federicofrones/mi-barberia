@@ -23,17 +23,51 @@ export default function StaffPage() {
         }
     };
 
+    const compressImage = (base64Str: string): Promise<string> => {
+        return new Promise((resolve) => {
+            const img = new Image();
+            img.src = base64Str;
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                const MAX_WIDTH = 800;
+                const MAX_HEIGHT = 800;
+                let width = img.width;
+                let height = img.height;
+
+                if (width > height) {
+                    if (width > MAX_WIDTH) {
+                        height *= MAX_WIDTH / width;
+                        width = MAX_WIDTH;
+                    }
+                } else {
+                    if (height > MAX_HEIGHT) {
+                        width *= MAX_HEIGHT / height;
+                        height = MAX_HEIGHT;
+                    }
+                }
+
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx?.drawImage(img, 0, 0, width, height);
+                // Comprimimos a JPEG con calidad 0.7 para asegurar que sea < 1MB
+                resolve(canvas.toDataURL('image/jpeg', 0.7));
+            };
+        });
+    };
+
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            // Límite de 10MB para que Firestore no se sature al guardar en base64
             if (file.size > 10 * 1024 * 1024) {
                 alert('La imagen es muy pesada. El tamaño máximo es de 10MB.');
                 return;
             }
             const reader = new FileReader();
-            reader.onloadend = () => {
-                setEditing({ ...editing, photoUrl: reader.result as string });
+            reader.onloadend = async () => {
+                const base64 = reader.result as string;
+                const compressed = await compressImage(base64);
+                setEditing({ ...editing, photoUrl: compressed });
             };
             reader.readAsDataURL(file);
         }
@@ -47,18 +81,27 @@ export default function StaffPage() {
         e.preventDefault();
         const payload = { ...editing };
 
-        const res = await fetch('/api/admin/barber', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-        const result = await res.json();
+        try {
+            const res = await fetch('/api/admin/barber', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
 
-        if (res.ok) {
-            setEditing(null);
-            fetchBarbers();
-        } else {
-            alert(result.error);
+            if (res.ok) {
+                setEditing(null);
+                fetchBarbers();
+            } else {
+                const text = await res.text();
+                try {
+                    const errorData = JSON.parse(text);
+                    alert(errorData.error || 'Error al guardar');
+                } catch (e) {
+                    alert('Error del servidor (Payload demasiado grande o error de base de datos)');
+                }
+            }
+        } catch (err) {
+            alert('Error de conexión');
         }
     };
 

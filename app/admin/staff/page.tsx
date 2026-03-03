@@ -26,9 +26,9 @@ export default function StaffPage() {
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            // Límite de 4MB para que Firestore no se sature al guardar en base64
-            if (file.size > 4 * 1024 * 1024) {
-                alert('La imagen es muy pesada. El tamaño máximo es de 4MB.');
+            // Límite de 10MB para que Firestore no se sature al guardar en base64
+            if (file.size > 10 * 1024 * 1024) {
+                alert('La imagen es muy pesada. El tamaño máximo es de 10MB.');
                 return;
             }
             const reader = new FileReader();
@@ -138,16 +138,16 @@ export default function StaffPage() {
                                             onChange={(e: any) => setEditing({ ...editing, displayName: e.target.value })}
                                             required
                                         />
-                                        <div className="bg-zinc-800/30 p-8 rounded-[2.5rem] border border-white/5 space-y-6">
+                                        <div className="bg-zinc-800/30 p-8 rounded-[2.5rem] border border-white/5 space-y-6 md:col-span-2">
                                             <div className="flex items-center gap-2 mb-2">
                                                 <div className="w-1 h-3 bg-[#D4AF37] rounded-full" />
                                                 <h3 className="text-[10px] font-black text-white uppercase tracking-[0.3em]">Imagen de Perfil</h3>
                                             </div>
 
-                                            <div className="flex flex-col md:flex-row items-center gap-8">
+                                            <div className="flex flex-col md:flex-row items-center gap-10">
                                                 <div className="relative group shrink-0">
-                                                    <div className="absolute inset-0 bg-[#D4AF37] rounded-[2rem] blur-xl opacity-0 group-hover:opacity-20 transition-opacity duration-500" />
-                                                    <div className={`relative w-32 h-32 rounded-[2rem] flex items-center justify-center text-4xl font-black shadow-2xl overflow-hidden border-2 transition-all duration-500 ${editing.photoUrl ? 'border-[#D4AF37]/50' : 'bg-zinc-900 border-white/5 text-zinc-700'}`}>
+                                                    <div className="absolute inset-0 bg-[#D4AF37] rounded-[2.5rem] blur-xl opacity-0 group-hover:opacity-20 transition-opacity duration-500" />
+                                                    <div className={`relative w-40 h-40 rounded-[2.5rem] flex items-center justify-center text-5xl font-black shadow-2xl overflow-hidden border-2 transition-all duration-500 ${editing.photoUrl ? 'border-[#D4AF37]/50' : 'bg-zinc-900 border-white/5 text-zinc-700'}`}>
                                                         {editing.photoUrl ? (
                                                             <img src={editing.photoUrl} alt="Preview" className="w-full h-full object-cover" />
                                                         ) : (editing.displayName?.charAt(0) || '?')}
@@ -165,7 +165,7 @@ export default function StaffPage() {
                                                     </div>
                                                 </div>
 
-                                                <div className="flex-1 w-full space-y-4">
+                                                <div className="flex-1 w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
                                                     <div className="space-y-2">
                                                         <label className="text-[9px] font-black text-zinc-600 uppercase tracking-widest ml-1">Cargar Archivo</label>
                                                         <input
@@ -183,6 +183,9 @@ export default function StaffPage() {
                                                             onChange={(e: any) => setEditing({ ...editing, photoUrl: e.target.value })}
                                                             className="bg-zinc-900/50"
                                                         />
+                                                    </div>
+                                                    <div className="sm:col-span-2">
+                                                        <p className="text-[8px] font-medium text-zinc-500 uppercase tracking-widest">Recomendado: Imagen cuadrada de alta resolución (Max 10MB)</p>
                                                     </div>
                                                 </div>
                                             </div>

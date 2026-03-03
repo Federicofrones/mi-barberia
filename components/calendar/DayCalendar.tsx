@@ -100,15 +100,15 @@ export default function DayCalendar({ barbers, appointments, dateKey, onRefresh 
                                         <div
                                             key={appt.id}
                                             onClick={() => setSelectedAppt(appt)}
-                                            className={`absolute w-[92%] left-[4%] rounded-2xl border p-2.5 overflow-hidden cursor-pointer transition-all hover:scale-[1.02] active:scale-95 ${s}`}
+                                            className={`absolute w-[92%] left-[4%] rounded-xl border px-3 py-1.5 overflow-hidden cursor-pointer transition-all hover:scale-[1.02] active:scale-95 flex flex-col justify-center ${s}`}
                                             style={{ top, height, zIndex: appt.status === 'cancelled' ? 5 : 10 }}
                                         >
-                                            <div className="flex justify-between items-start">
-                                                <div className="font-black truncate text-xs">{appt.clientName}</div>
-                                                <div className="font-mono text-[9px] opacity-70">{timeStr}</div>
+                                            <div className="flex justify-between items-center gap-2">
+                                                <div className="font-black truncate text-xs leading-none">{appt.clientName}</div>
+                                                <div className="font-mono text-[9px] opacity-70 whitespace-nowrap leading-none">{timeStr}</div>
                                             </div>
-                                            {height > 50 && (
-                                                <div className="truncate text-[9px] mt-1 font-bold uppercase tracking-tight opacity-80">{appt.serviceName}</div>
+                                            {height >= 45 && (
+                                                <div className="truncate text-[9px] mt-1 font-bold uppercase tracking-tight opacity-80 leading-none">{appt.serviceName}</div>
                                             )}
                                         </div>
                                     );

@@ -18,10 +18,10 @@ export const Button = ({ children, variant = 'primary', className = '', ...props
 
 export const Input = ({ label, className = '', ...props }: any) => {
     return (
-        <div className="flex flex-col gap-1.5 w-full text-white">
+        <div className="flex flex-col gap-1.5 w-full text-white box-border">
             {label && <label className="text-xs font-black uppercase tracking-widest text-[#D4AF37] ml-1">{label}</label>}
             <input
-                className={`w-full bg-zinc-900 border border-zinc-800 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:bg-black focus:border-[#D4AF37] focus:ring-4 focus:ring-[#D4AF37]/5 transition-all outline-none ${className}`}
+                className={`w-full bg-zinc-900 border border-zinc-800 rounded-2xl px-4 py-3 text-sm focus:outline-none focus:bg-black focus:border-[#D4AF37] focus:ring-4 focus:ring-[#D4AF37]/5 transition-all outline-none box-border ${className}`}
                 {...props}
             />
         </div>

@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react';
 import { Card, Button, Input, Select } from '@/components/ui';
 import Link from 'next/link';
-import { User, Shield, Clock, TrendingUp, Settings2, Plus, Calendar, CheckCircle2, XCircle } from 'lucide-react';
+import { User, Shield, Clock, TrendingUp, Settings2, Plus, Calendar, CheckCircle2, XCircle, Scissors } from 'lucide-react';
 
 export default function StaffPage() {
     const [barbers, setBarbers] = useState<any[]>([]);
@@ -69,18 +69,21 @@ export default function StaffPage() {
             {/* Header Section */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-black tracking-tight text-black">Gestión de Staff</h1>
-                    <p className="text-gray-500 mt-1">Administra tus profesionales, comisiones y agendas.</p>
+                    <h1 className="text-4xl font-black tracking-tighter text-white flex items-center gap-3">
+                        <Scissors className="w-10 h-10 text-[#D4AF37]" />
+                        Staff de Barberos
+                    </h1>
+                    <p className="text-zinc-500 mt-2 font-medium">Administra a tus artistas y sus comisiones.</p>
                 </div>
                 <div className="flex flex-wrap gap-3">
                     <Link
                         href="/admin/staff/overrides"
-                        className="flex items-center gap-2 border border-gray-200 bg-white px-4 py-2 rounded-lg font-semibold text-sm hover:border-black transition-all shadow-sm"
+                        className="flex items-center gap-2 border border-white/10 bg-zinc-900 px-6 py-3 rounded-2xl font-bold text-sm text-zinc-400 hover:text-[#D4AF37] hover:border-[#D4AF37]/50 transition-all shadow-xl"
                     >
-                        <Calendar className="w-4 h-4 text-gray-400" />
-                        Excepciones (Días Libres)
+                        <Calendar className="w-4 h-4" />
+                        Días Libres
                     </Link>
-                    <Button onClick={createNew} className="flex items-center gap-2 px-6 shadow-lg shadow-black/10">
+                    <Button onClick={createNew} className="flex items-center gap-2 px-8">
                         <Plus className="w-4 h-4" />
                         Nuevo Barbero
                     </Button>
@@ -89,62 +92,62 @@ export default function StaffPage() {
 
             {/* Editing/Creation Form */}
             {editing && (
-                <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] flex items-center justify-center p-4">
-                    <Card className="w-full max-w-2xl bg-white border-none shadow-2xl animate-in fade-in zoom-in duration-200 max-h-[90vh] overflow-y-auto">
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center p-4">
+                    <Card className="w-full max-w-2xl bg-zinc-900 border border-white/10 shadow-3xl animate-in fade-in zoom-in duration-300 max-h-[90vh] overflow-y-auto">
                         <div className="p-2">
-                            <div className="flex justify-between items-center mb-6">
-                                <h2 className="text-xl font-bold flex items-center gap-2">
-                                    <Settings2 className="w-5 h-5 text-amber-500" />
-                                    {editing.id ? 'Editar Perfil del Barbero' : 'Registrar Nuevo Barbero'}
+                            <div className="flex justify-between items-center mb-8">
+                                <h2 className="text-2xl font-black text-white flex items-center gap-3">
+                                    <Settings2 className="w-6 h-6 text-[#D4AF37]" />
+                                    {editing.id ? 'Editar Barbero' : 'Nuevo Registro'}
                                 </h2>
-                                <button onClick={() => setEditing(null)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                                    <XCircle className="w-6 h-6 text-gray-400" />
+                                <button onClick={() => setEditing(null)} className="p-2 hover:bg-white/5 rounded-full transition-colors text-zinc-500 hover:text-white">
+                                    <XCircle className="w-8 h-8" />
                                 </button>
                             </div>
 
                             <form onSubmit={handleSave} className="space-y-8">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                    <div className="space-y-4">
-                                        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest">Información Básica</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                                    <div className="space-y-6">
+                                        <h3 className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Perfil Público</h3>
                                         <Input
-                                            label="Nombre del Barbero"
-                                            placeholder="Ej. Juan 'The Barber' Pérez"
+                                            label="Nombre Artístico"
+                                            placeholder="Ej. Tony 'Blade' Romano"
                                             value={editing.displayName}
                                             onChange={(e: any) => setEditing({ ...editing, displayName: e.target.value })}
                                             required
                                         />
                                         <div className="grid grid-cols-2 gap-4">
                                             <Input
-                                                label="Orden (Posición)"
+                                                label="Orden"
                                                 type="number"
                                                 value={editing.order}
                                                 onChange={(e: any) => setEditing({ ...editing, order: Number(e.target.value) })}
                                                 required
                                             />
                                             <Select
-                                                label="Estado Actual"
+                                                label="Estatus"
                                                 value={editing.isActive ? "true" : "false"}
                                                 onChange={(e: any) => setEditing({ ...editing, isActive: e.target.value === "true" })}
                                             >
-                                                <option value="true">🟢 Activo</option>
-                                                <option value="false">🔴 Inactivo</option>
+                                                <option value="true" className="bg-zinc-900">Activo</option>
+                                                <option value="false" className="bg-zinc-900">Inactivo</option>
                                             </Select>
                                         </div>
                                     </div>
 
-                                    <div className="space-y-4">
-                                        <h3 className="text-xs font-bold text-gray-400 uppercase tracking-widest">Esquema de Pagos</h3>
+                                    <div className="space-y-6">
+                                        <h3 className="text-[10px] font-black text-zinc-500 uppercase tracking-[0.2em]">Finanzas</h3>
                                         <Select
-                                            label="Modalidad"
+                                            label="Tipo de Pago"
                                             value={editing.commission.type}
                                             onChange={(e: any) => setEditing({ ...editing, commission: { ...editing.commission, type: e.target.value } })}
                                         >
-                                            <option value="percentage">Porcentaje sobre Venta</option>
-                                            <option value="fixed">Monto Fijo por Turno</option>
+                                            <option value="percentage" className="bg-zinc-900">Porcentaje (%)</option>
+                                            <option value="fixed" className="bg-zinc-900">Monto Fijo ($)</option>
                                         </Select>
                                         <div className="grid grid-cols-2 gap-4">
                                             <Input
-                                                label={editing.commission.type === 'percentage' ? 'Porcentaje (%)' : 'Monto ($)'}
+                                                label="Valor"
                                                 type="number"
                                                 value={editing.commission.value}
                                                 onChange={(e: any) => setEditing({ ...editing, commission: { ...editing.commission, value: Number(e.target.value) } })}
@@ -155,20 +158,25 @@ export default function StaffPage() {
                                                 value={editing.commission.includeTips ? "true" : "false"}
                                                 onChange={(e: any) => setEditing({ ...editing, commission: { ...editing.commission, includeTips: e.target.value === "true" } })}
                                             >
-                                                <option value="true">Incluir en Reportes</option>
-                                                <option value="false">Omitir de Reportes</option>
+                                                <option value="true" className="bg-zinc-900">Trakear</option>
+                                                <option value="false" className="bg-zinc-900">Privado</option>
                                             </Select>
                                         </div>
                                     </div>
                                 </div>
 
-                                <div className="bg-amber-50 p-4 rounded-xl border border-amber-100 italic text-sm text-amber-800">
-                                    Tip: Los horarios de trabajo se configuran por defecto al crear un barbero. Puedes ajustarlos manualmente en la base de datos si necesitas horarios cortados.
+                                <div className="bg-[#D4AF37]/5 p-6 rounded-[2rem] border border-[#D4AF37]/10 flex items-start gap-4">
+                                    <div className="p-2 bg-[#D4AF37] rounded-xl">
+                                        <Shield className="w-5 h-5 text-black" />
+                                    </div>
+                                    <p className="text-xs text-[#D4AF37] font-medium leading-relaxed">
+                                        Los horarios de trabajo y configuración avanzada se sincronizan automáticamente con la agenda global.
+                                    </p>
                                 </div>
 
-                                <div className="flex gap-3 justify-end pt-4 border-t sticky bottom-0 bg-white">
-                                    <Button type="button" variant="outline" onClick={() => setEditing(null)} className="px-8 border-gray-200">Cerrar</Button>
-                                    <Button type="submit" className="px-8 bg-black text-white hover:bg-zinc-800">Guardar Cambios</Button>
+                                <div className="flex gap-4 justify-end pt-6 border-t border-white/5 bg-zinc-900 sticky bottom-0">
+                                    <Button type="button" variant="outline" onClick={() => setEditing(null)} className="px-10">Cancelar</Button>
+                                    <Button type="submit" className="px-12 bg-[#D4AF37] text-black hover:bg-[#F1D279] shadow-[#D4AF37]/20">Guardar Cambios</Button>
                                 </div>
                             </form>
                         </div>
@@ -178,87 +186,77 @@ export default function StaffPage() {
 
             {/* List Section */}
             {loading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {[1, 2, 3].map(i => (
-                        <div key={i} className="h-64 bg-gray-100 rounded-2xl animate-pulse" />
+                        <div key={i} className="h-80 bg-zinc-900/50 rounded-[2.5rem] animate-pulse" />
                     ))}
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                     {barbers.length === 0 ? (
-                        <div className="col-span-full py-20 text-center bg-gray-50 rounded-3xl border-2 border-dashed border-gray-200">
-                            <User className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                            <p className="text-gray-500 font-medium">No hay profesionales registrados todavía.</p>
-                            <Button variant="outline" onClick={createNew} className="mt-4">Empezar ahora</Button>
+                        <div className="col-span-full py-32 text-center bg-zinc-900/30 rounded-[3rem] border border-dashed border-white/5">
+                            <User className="w-20 h-20 text-zinc-800 mx-auto mb-6" />
+                            <p className="text-zinc-500 font-bold text-xl">Sin barberos en el equipo.</p>
+                            <Button variant="outline" onClick={createNew} className="mt-6 max-w-xs mx-auto">Agregar primero</Button>
                         </div>
                     ) : barbers.map(b => (
                         <div
                             key={b.id}
-                            className={`group relative bg-white border border-gray-100 rounded-3xl p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 overflow-hidden ${!b.isActive && 'grayscale bg-gray-50/50'}`}
+                            className={`group relative bg-zinc-900/40 border border-white/5 rounded-[2.5rem] p-8 shadow-2xl hover:bg-zinc-900 transition-all duration-500 overflow-hidden ${!b.isActive && 'grayscale opacity-40'}`}
                         >
-                            {/* Decorative Background */}
-                            <div className="absolute -top-10 -right-10 w-32 h-32 bg-gray-50 rounded-full group-hover:bg-amber-50 transition-colors duration-500" />
+                            {/* Accent Light */}
+                            <div className="absolute top-0 right-0 w-32 h-32 bg-[#D4AF37]/5 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-[#D4AF37]/10 transition-colors" />
 
-                            <div className="relative flex justify-between items-start mb-6">
-                                <div className="flex items-center gap-4">
-                                    <div className={`w-14 h-14 rounded-2xl flex items-center justify-center text-xl font-bold ${b.isActive ? 'bg-black text-white' : 'bg-gray-200 text-gray-500'}`}>
+                            <div className="relative flex justify-between items-start mb-8">
+                                <div className="flex items-center gap-5">
+                                    <div className={`w-16 h-16 rounded-[1.5rem] flex items-center justify-center text-2xl font-black shadow-2xl ${b.isActive ? 'bg-[#D4AF37] text-black shadow-[#D4AF37]/20' : 'bg-zinc-800 text-zinc-500'}`}>
                                         {b.displayName.charAt(0)}
                                     </div>
                                     <div>
-                                        <h3 className="font-black text-xl text-black leading-tight">{b.displayName}</h3>
-                                        <div className="flex items-center gap-1.5 mt-1">
+                                        <h3 className="font-black text-2xl text-white leading-tight tracking-tight">{b.displayName}</h3>
+                                        <div className="flex items-center gap-2 mt-2">
                                             {b.isActive ? (
-                                                <span className="flex items-center gap-1 text-[10px] uppercase tracking-tighter font-extrabold text-green-600">
-                                                    <CheckCircle2 className="w-3 h-3" /> Activo
+                                                <span className="px-3 py-1 bg-green-500/10 text-green-400 text-[9px] font-black uppercase tracking-widest rounded-full flex items-center gap-1">
+                                                    <CheckCircle2 className="w-3 h-3" /> Online
                                                 </span>
                                             ) : (
-                                                <span className="flex items-center gap-1 text-[10px] uppercase tracking-tighter font-extrabold text-red-400">
-                                                    <XCircle className="w-3 h-3" /> Inactivo
+                                                <span className="px-3 py-1 bg-red-500/10 text-red-500 text-[9px] font-black uppercase tracking-widest rounded-full flex items-center gap-1">
+                                                    <XCircle className="w-3 h-3" /> Offline
                                                 </span>
                                             )}
-                                            <span className="text-gray-300">•</span>
-                                            <span className="text-[10px] text-gray-400 uppercase tracking-tighter font-bold">Orden: #{b.order}</span>
                                         </div>
                                     </div>
                                 </div>
                             </div>
 
-                            <div className="space-y-4 mb-8">
-                                <div className="flex items-center gap-3 text-sm">
-                                    <div className="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center">
-                                        <TrendingUp className="w-4 h-4 text-amber-600" />
-                                    </div>
-                                    <div>
-                                        <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest">Comisión</p>
-                                        <p className="text-black font-bold">
-                                            {b.commission?.type === 'percentage' ? `${b.commission?.value}%` : `$${b.commission?.value}`}
-                                            <span className="text-xs font-normal text-gray-500 ml-1">sobre el neto</span>
-                                        </p>
-                                    </div>
+                            <div className="grid grid-cols-2 gap-4 mb-10">
+                                <div className="bg-black/30 p-4 rounded-3xl border border-white/5">
+                                    <p className="text-[9px] text-zinc-600 font-black uppercase tracking-widest mb-1 flex items-center gap-1">
+                                        <TrendingUp className="w-3 h-3 text-[#D4AF37]" /> Comisión
+                                    </p>
+                                    <p className="text-white font-black text-lg">
+                                        {b.commission?.type === 'percentage' ? `${b.commission?.value}%` : `$${b.commission?.value}`}
+                                    </p>
                                 </div>
-
-                                <div className="flex items-center gap-3 text-sm">
-                                    <div className="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center">
-                                        <Clock className="w-4 h-4 text-blue-600" />
-                                    </div>
-                                    <div>
-                                        <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest">Disponibilidad</p>
-                                        <p className="text-black font-bold">Lunes a Sábado</p>
-                                    </div>
+                                <div className="bg-black/30 p-4 rounded-3xl border border-white/5">
+                                    <p className="text-[9px] text-zinc-600 font-black uppercase tracking-widest mb-1 flex items-center gap-1">
+                                        <Shield className="w-3 h-3 text-[#D4AF37]" /> Rango
+                                    </p>
+                                    <p className="text-white font-black text-lg">Master</p>
                                 </div>
                             </div>
 
                             <Button
                                 variant="outline"
-                                className="w-full rounded-xl border-gray-100 group-hover:border-black group-hover:bg-black group-hover:text-white transition-all duration-300 py-3 font-bold text-xs uppercase"
+                                className="w-full bg-zinc-950/50 border-white/5 group-hover:bg-[#D4AF37] group-hover:text-black group-hover:border-[#D4AF37] group-hover:shadow-xl group-hover:shadow-[#D4AF37]/20 transition-all duration-500 py-4 font-black text-[10px] uppercase tracking-[0.2em]"
                                 onClick={() => setEditing({
                                     ...b,
                                     commission: b.commission || { type: 'percentage', value: 50, includeTips: true },
                                     workingHours: b.workingHours || {}
                                 })}
                             >
-                                <Settings2 className="w-4 h-4 mr-2" />
-                                Gestionar Perfil
+                                <Settings2 className="w-4 h-4 mr-1" />
+                                Editar Perfil
                             </Button>
                         </div>
                     ))}

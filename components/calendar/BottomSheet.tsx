@@ -1,6 +1,8 @@
+"use client";
+
 import React, { useState } from 'react';
-import { Button, Select, Input } from '@/components/ui';
-import { Clock, Check, X, CreditCard, Banknote, Landmark, Trash2, Edit3 } from 'lucide-react';
+import { Button } from '@/components/ui';
+import { X, Clock, User, Scissors, Phone, CheckCircle2, DollarSign, Edit3 } from 'lucide-react';
 
 interface BottomSheetProps {
     appt: any;
@@ -9,208 +11,157 @@ interface BottomSheetProps {
 }
 
 export default function BottomSheet({ appt, onClose, onRefresh }: BottomSheetProps) {
-    const [loading, setLoading] = useState(false);
+    const [paymentMethod, setPaymentMethod] = useState('Efectivo');
     const [isEditingDuration, setIsEditingDuration] = useState(false);
-    const [customDuration, setCustomDuration] = useState(appt.durationMin);
+    const [tempDuration, setTempDuration] = useState(appt.durationMin);
 
-    // Payment States
-    const [method, setMethod] = useState<'cash' | 'card' | 'transfer'>('cash');
-    const [discount, setDiscount] = useState(0);
-    const [tip, setTip] = useState(0);
-
-    const startStr = appt.startAt?.toDate ? appt.startAt.toDate().toLocaleTimeString('es-UY', { hour: '2-digit', minute: '2-digit' }) :
-        new Date(appt.startAt._seconds * 1000).toLocaleTimeString('es-UY', { hour: '2-digit', minute: '2-digit' });
-
-    const handleApprove = async (action: 'approve' | 'cancel') => {
-        setLoading(true);
-        await fetch('/api/admin/approve', {
+    const handleStatus = async (status: string) => {
+        const res = await fetch('/api/admin/approve', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ appointmentId: appt.id, action })
+            body: JSON.stringify({ appointmentId: appt.id, status })
         });
-        onRefresh();
-        onClose();
-    };
-
-    const handleUpdateDuration = async () => {
-        setLoading(true);
-        try {
-            await fetch('/api/admin/appointment/update', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ appointmentId: appt.id, durationMin: customDuration })
-            });
-            onRefresh();
-            setIsEditingDuration(false);
-        } catch (e) {
-            console.error(e);
-        } finally {
-            setLoading(false);
-        }
-    };
-
-    const handlePay = async () => {
-        setLoading(true);
-        const res = await fetch('/api/admin/close-pay', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ appointmentId: appt.id, method, discount, tip })
-        });
-
         if (res.ok) {
             onRefresh();
             onClose();
-        } else {
-            const { error } = await res.json();
-            alert(error);
-            setLoading(false);
+        }
+    };
+
+    const handleClose = async () => {
+        const res = await fetch('/api/admin/close-pay', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                appointmentId: appt.id,
+                paymentMethod: paymentMethod.toLowerCase(),
+                tip: 0,
+                discount: 0
+            })
+        });
+        if (res.ok) {
+            onRefresh();
+            onClose();
+        }
+    };
+
+    const updateDuration = async () => {
+        const res = await fetch('/api/admin/appointment/update', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                appointmentId: appt.id,
+                updates: { durationMin: tempDuration }
+            })
+        });
+        if (res.ok) {
+            setIsEditingDuration(false);
+            onRefresh();
+            onClose();
         }
     };
 
     return (
-        <>
-            <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity" onClick={onClose} />
-            <div className="fixed bottom-0 inset-x-0 bg-white rounded-t-[2.5rem] shadow-2xl z-50 transform transition-transform slide-in-bottom max-h-[95vh] overflow-y-auto ring-1 ring-black/5">
+        <div className="fixed inset-0 z-[100] flex items-end justify-center pointer-events-none">
+            <div className="absolute inset-0 bg-black/80 backdrop-blur-sm pointer-events-auto" onClick={onClose} />
+            <div className={`
+                relative w-full max-w-xl bg-zinc-900 border-t border-white/10 rounded-t-[3rem] p-6 pb-12 
+                pointer-events-auto transition-transform duration-500 transform slide-in-bottom
+            `}>
+                <div className="w-12 h-1.5 bg-zinc-800 rounded-full mx-auto mb-6" />
 
-                <div className="w-16 h-1.5 bg-gray-200 rounded-full mx-auto mt-4 mb-6" />
-
-                <div className="px-6 pb-12 w-full max-w-xl mx-auto">
-                    {/* Header Info */}
-                    <div className="flex justify-between items-start mb-6">
-                        <div>
-                            <h2 className="text-3xl font-black text-black tracking-tight">{appt.clientName}</h2>
-                            <div className="flex items-center gap-2 text-gray-400 font-medium mt-1">
-                                <Clock className="w-4 h-4" />
-                                <span>{startStr} • {appt.durationMin} min</span>
-                                {!isEditingDuration && appt.status !== 'done' && appt.status !== 'cancelled' && (
-                                    <button
-                                        onClick={() => setIsEditingDuration(true)}
-                                        className="text-amber-600 hover:text-amber-700 p-1 rounded-md hover:bg-amber-50"
-                                    >
-                                        <Edit3 className="w-4 h-4" />
-                                    </button>
-                                )}
-                            </div>
-                        </div>
-                        <div className={`px-4 py-1 rounded-2xl text-[10px] uppercase font-black tracking-widest
-                            ${appt.status === 'done' ? 'bg-green-100 text-green-700' :
-                                appt.status === 'confirmed' ? 'bg-blue-100 text-blue-700' :
-                                    appt.status === 'pending' ? 'bg-yellow-100 text-yellow-700' : 'bg-gray-100 text-gray-500'}`}
-                        >
+                <div className="flex justify-between items-start mb-8">
+                    <div>
+                        <h2 className="text-2xl font-black text-white tracking-tight">{appt.clientName}</h2>
+                        <p className="text-[#D4AF37] font-bold text-sm flex items-center gap-1.5 mt-1">
+                            <Scissors className="w-4 h-4" />
+                            {appt.serviceName}
+                        </p>
+                    </div>
+                    <div className="text-right">
+                        <p className="text-xs font-black uppercase text-zinc-500 tracking-widest">Estado</p>
+                        <span className={`text-[10px] font-black uppercase px-3 py-1 rounded-full mt-1 inline-block
+                            ${appt.status === 'confirmed' ? 'bg-[#D4AF37] text-black' : 'bg-red-500/10 text-red-500'}`}>
                             {appt.status}
-                        </div>
-                    </div>
-
-                    {/* Quick Duration Edit */}
-                    {isEditingDuration && (
-                        <div className="bg-amber-50 p-4 rounded-3xl mb-6 border border-amber-100 animate-in fade-in slide-in-from-top-4">
-                            <h4 className="text-sm font-bold text-amber-900 mb-3 flex items-center gap-2">
-                                <Clock className="w-4 h-4" />
-                                Ajustar duración para este turno
-                            </h4>
-                            <div className="flex gap-2">
-                                <Input
-                                    type="number"
-                                    min={5}
-                                    step={5}
-                                    value={customDuration}
-                                    onChange={(e: any) => setCustomDuration(Number(e.target.value))}
-                                />
-                                <Button onClick={handleUpdateDuration} disabled={loading} className="shrink-0 bg-amber-600 hover:bg-amber-700">
-                                    <Check className="w-4 h-4" />
-                                </Button>
-                                <Button variant="outline" onClick={() => setIsEditingDuration(false)} className="shrink-0">
-                                    <X className="w-4 h-4" />
-                                </Button>
-                            </div>
-                            <p className="text-[10px] text-amber-700 mt-2 font-medium">Este cambio solo afecta a esta cita y estira el bloque en el calendario.</p>
-                        </div>
-                    )}
-
-                    <div className="grid grid-cols-2 gap-3 mb-8">
-                        <div className="bg-gray-50 rounded-2xl p-4">
-                            <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-1">Servicio</p>
-                            <p className="font-bold text-black">{appt.serviceName}</p>
-                        </div>
-                        <div className="bg-gray-50 rounded-2xl p-4">
-                            <p className="text-[10px] text-gray-400 uppercase font-black tracking-widest mb-1">Profesional</p>
-                            <p className="font-bold text-black">{appt.barberName}</p>
-                        </div>
-                    </div>
-
-                    <div className="space-y-4">
-                        {appt.status === 'pending' && (
-                            <div className="grid grid-cols-2 gap-4 pt-4 border-t">
-                                <Button variant="outline" className="border-red-100 text-red-600 hover:bg-red-50 py-4 h-auto rounded-2xl font-bold" onClick={() => handleApprove('cancel')} disabled={loading}>
-                                    <Trash2 className="w-4 h-4 mr-2" />
-                                    Rechazar
-                                </Button>
-                                <Button className="bg-black text-white py-4 h-auto rounded-2xl font-black shadow-xl shadow-black/10" onClick={() => handleApprove('approve')} disabled={loading}>
-                                    <Check className="w-4 h-4 mr-2" />
-                                    Aprobar
-                                </Button>
-                            </div>
-                        )}
-
-                        {appt.status === 'confirmed' && (
-                            <div className="space-y-6 pt-4 border-t">
-                                <h3 className="font-black text-lg tracking-tight">Cobrar Turno</h3>
-                                <div className="space-y-4">
-                                    <div className="grid grid-cols-3 gap-2">
-                                        {[
-                                            { id: 'cash', label: 'Efectivo', icon: Banknote, color: 'text-green-600' },
-                                            { id: 'card', label: 'Tarjeta', icon: CreditCard, color: 'text-blue-600' },
-                                            { id: 'transfer', label: 'Transf.', icon: Landmark, color: 'text-purple-600' }
-                                        ].map(m => (
-                                            <button
-                                                key={m.id}
-                                                onClick={() => setMethod(m.id as any)}
-                                                className={`flex flex-col items-center justify-center p-4 rounded-3xl border-2 transition-all ${method === m.id ? 'border-black bg-black text-white' : 'border-gray-100 bg-white text-gray-500 hover:border-gray-200'}`}
-                                            >
-                                                <m.icon className={`w-6 h-6 mb-2 ${method === m.id ? 'text-white' : m.color}`} />
-                                                <span className="text-[10px] font-black uppercase tracking-widest">{m.label}</span>
-                                            </button>
-                                        ))}
-                                    </div>
-
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <Input label="Propina ($)" type="number" min={0} value={tip} onChange={(e: any) => setTip(Number(e.target.value))} />
-                                        <Input label="Descuento ($)" type="number" min={0} value={discount} onChange={(e: any) => setDiscount(Number(e.target.value))} />
-                                    </div>
-
-                                    <div className="bg-black rounded-3xl p-6 flex justify-between items-center shadow-2xl shadow-black/20">
-                                        <div>
-                                            <p className="text-[10px] text-gray-400 font-black uppercase tracking-widest">Total Cliente</p>
-                                            <p className="text-white text-4xl font-black tracking-tighter">${appt.pricing.basePrice - discount + tip}</p>
-                                        </div>
-                                        <div className="text-right">
-                                            <p className="text-[10px] text-gray-400 font-bold">Base: ${appt.pricing.basePrice}</p>
-                                            {discount > 0 && <p className="text-[10px] text-red-400 font-bold">Desc: -${discount}</p>}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <div className="grid grid-cols-2 gap-3">
-                                    <Button variant="outline" className="text-red-500 py-3 rounded-2xl border-gray-100 hover:bg-red-50" onClick={() => handleApprove('cancel')} disabled={loading}>Anular</Button>
-                                    <Button className="bg-black text-white py-3 rounded-2xl font-black" onClick={handlePay} disabled={loading}>Registrar Pago</Button>
-                                </div>
-                            </div>
-                        )}
-
-                        {(appt.status === 'done' || appt.status === 'cancelled') && (
-                            <div className={`text-center p-10 rounded-[2rem] border mt-4 ${appt.status === 'done' ? 'bg-green-50 border-green-100 text-green-800' : 'bg-red-50 border-red-100 text-red-800'}`}>
-                                <h4 className="font-black text-lg mb-2 capitalize">{appt.status === 'done' ? '¡Cobrado!' : 'Cancelado'}</h4>
-                                <p className="text-sm font-medium opacity-80">Este turno ya no puede ser modificado.</p>
-                                <Button variant="outline" className="mt-6 w-full rounded-2xl border-gray-200" onClick={onClose}>Volver a la Agenda</Button>
-                            </div>
-                        )}
-
-                        {appt.status !== 'done' && appt.status !== 'cancelled' && (
-                            <Button variant="outline" className="w-full mt-2 rounded-2xl h-14 border-gray-100 font-bold text-gray-400" onClick={onClose}>Cerrar Panel</Button>
-                        )}
+                        </span>
                     </div>
                 </div>
+
+                {/* Details Grid */}
+                <div className="grid grid-cols-2 gap-4 mb-8">
+                    <div className="bg-black/40 p-4 rounded-3xl border border-white/5 group relative">
+                        <p className="text-[10px] font-black uppercase text-zinc-500 tracking-widest mb-1 flex items-center gap-1">
+                            <Clock className="w-3 h-3" /> Duración
+                        </p>
+                        <div className="flex items-center gap-2">
+                            {isEditingDuration ? (
+                                <div className="flex items-center gap-2">
+                                    <input
+                                        type="number"
+                                        value={tempDuration}
+                                        onChange={(e) => setTempDuration(Number(e.target.value))}
+                                        className="w-16 bg-zinc-800 border border-[#D4AF37] rounded-lg px-2 py-1 text-sm text-white"
+                                        autoFocus
+                                    />
+                                    <button onClick={updateDuration} className="p-1 text-green-500"><CheckCircle2 className="w-4 h-4" /></button>
+                                </div>
+                            ) : (
+                                <>
+                                    <p className="font-bold text-white">{appt.durationMin} min</p>
+                                    <button onClick={() => { setIsEditingDuration(true); setTempDuration(appt.durationMin); }} className="opacity-0 group-hover:opacity-100 transition-opacity p-1 text-[#D4AF37]">
+                                        <Edit3 className="w-3.5 h-3.5" />
+                                    </button>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                    <div className="bg-black/40 p-4 rounded-3xl border border-white/5">
+                        <p className="text-[10px] font-black uppercase text-zinc-500 tracking-widest mb-1 flex items-center gap-1">
+                            <Phone className="w-3 h-3" /> WhatsApp
+                        </p>
+                        <p className="font-bold text-white text-sm">{appt.clientPhone}</p>
+                    </div>
+                </div>
+
+                {appt.status === 'pending' && (
+                    <div className="grid grid-cols-2 gap-3 mb-4">
+                        <Button variant="outline" onClick={() => handleStatus('cancelled')} className="border-red-500/30 text-red-500 hover:bg-red-500/10">Rechazar</Button>
+                        <Button onClick={() => handleStatus('confirmed')} className="bg-[#D4AF37] text-black">Aceptar Turno</Button>
+                    </div>
+                )}
+
+                {appt.status === 'confirmed' && (
+                    <div className="space-y-4">
+                        <div className="bg-[#D4AF37] p-6 rounded-[2.5rem] shadow-xl shadow-[#D4AF37]/10">
+                            <p className="text-[10px] font-black uppercase text-black/50 tracking-widest mb-4">Finalizar y Cobrar</p>
+                            <div className="flex gap-2">
+                                {['Efectivo', 'Transferencia', 'Tarjeta'].map(m => (
+                                    <button
+                                        key={m}
+                                        onClick={() => setPaymentMethod(m)}
+                                        className={`flex-1 py-3 rounded-2xl text-xs font-bold transition-all
+                                            ${paymentMethod === m ? 'bg-black text-[#D4AF37]' : 'bg-black/10 text-black hover:bg-black/20'}`}
+                                    >
+                                        {m}
+                                    </button>
+                                ))}
+                            </div>
+                            <Button onClick={handleClose} className="mt-4 bg-black text-[#D4AF37] border-none shadow-none hover:bg-zinc-900">
+                                Confirmar Pago y Cerrar
+                            </Button>
+                        </div>
+                        <button onClick={() => handleStatus('cancelled')} className="w-full text-zinc-600 text-[10px] font-bold uppercase tracking-widest hover:text-red-500 transition-colors">
+                            Cancelar Turno
+                        </button>
+                    </div>
+                )}
+
+                {appt.status === 'done' && (
+                    <div className="text-center py-6 bg-green-500/5 rounded-[2.5rem] border border-green-500/20">
+                        <CheckCircle2 className="w-12 h-12 text-green-500 mx-auto mb-2" />
+                        <p className="text-green-500 font-bold">Turno Finalizado y Cobrado</p>
+                    </div>
+                )}
             </div>
-        </>
+        </div>
     );
 }

@@ -1,3 +1,5 @@
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import TimeColumn from './TimeColumn';
 import BottomSheet from './BottomSheet';
@@ -28,15 +30,17 @@ export default function DayCalendar({ barbers, appointments, dateKey, onRefresh 
     const visibleBarbers = barbers.filter(b => selectedBarberId ? b.id === selectedBarberId : true);
 
     return (
-        <div className="w-full h-full relative bg-gray-50 flex flex-col overflow-hidden">
+        <div className="w-full h-full relative bg-black flex flex-col overflow-hidden">
             {/* Mobile Barber Selector */}
-            <div className="lg:hidden flex items-center gap-2 p-2 overflow-x-auto bg-white border-b border-gray-100 shrink-0 no-scrollbar">
+            <div className="lg:hidden flex items-center gap-2 p-2 overflow-x-auto bg-zinc-900/50 border-b border-white/5 shrink-0 no-scrollbar">
                 {barbers.map(barber => (
                     <button
                         key={barber.id}
                         onClick={() => setSelectedBarberId(barber.id)}
                         className={`px-4 py-2 rounded-2xl text-xs font-black uppercase tracking-tighter whitespace-nowrap transition-all
-                            ${selectedBarberId === barber.id ? 'bg-black text-white shadow-lg' : 'bg-gray-100 text-gray-500'}`}
+                            ${selectedBarberId === barber.id
+                                ? 'bg-[#D4AF37] text-black shadow-lg shadow-[#D4AF37]/20'
+                                : 'bg-zinc-800 text-zinc-400'}`}
                     >
                         {barber.displayName}
                     </button>
@@ -49,9 +53,9 @@ export default function DayCalendar({ barbers, appointments, dateKey, onRefresh 
                 {/* Desktop View: All Barbers | Mobile View: Selected Barber */}
                 <div className="flex relative flex-1 lg:min-w-max">
                     {(window.innerWidth < 1024 ? visibleBarbers : barbers).map(barber => (
-                        <div key={barber.id} className="min-w-full lg:min-w-[220px] border-r border-gray-100 bg-white">
+                        <div key={barber.id} className="min-w-full lg:min-w-[220px] border-r border-white/5 bg-black">
                             {/* Header (Desktop only or sticky) */}
-                            <div className="hidden lg:flex h-12 border-b border-gray-100 bg-gray-50/50 backdrop-blur-md items-center justify-center font-black text-[10px] uppercase tracking-widest sticky top-0 z-10">
+                            <div className="hidden lg:flex h-12 border-b border-white/5 bg-zinc-900/50 backdrop-blur-md items-center justify-center font-black text-[10px] uppercase tracking-widest sticky top-0 z-10 text-[#D4AF37]">
                                 {barber.displayName}
                             </div>
 
@@ -61,7 +65,7 @@ export default function DayCalendar({ barbers, appointments, dateKey, onRefresh 
                                     className="absolute inset-0 pointer-events-none"
                                     style={{
                                         backgroundSize: `100% ${60 * PIXELS_PER_MINUTE}px`,
-                                        backgroundImage: 'linear-gradient(to bottom, #f9fafb 1px, transparent 1px)'
+                                        backgroundImage: 'linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px)'
                                     }}
                                 />
 
@@ -75,10 +79,10 @@ export default function DayCalendar({ barbers, appointments, dateKey, onRefresh 
                                     const height = (appt.durationMin || 30) * PIXELS_PER_MINUTE;
 
                                     const statusStyles = {
-                                        pending: "bg-amber-50 border-amber-200 text-amber-900 border-l-4 border-l-amber-500",
-                                        confirmed: "bg-zinc-900 border-zinc-800 text-white shadow-xl",
-                                        done: "bg-gray-100 border-gray-200 text-gray-400 opacity-60",
-                                        cancelled: "bg-red-50 border-red-100 text-red-300 line-through opacity-40 text-[9px]"
+                                        pending: "bg-zinc-800 border-zinc-700 text-zinc-300 border-l-4 border-l-amber-500",
+                                        confirmed: "bg-[#D4AF37] border-[#AA8A1E] text-black shadow-xl shadow-[#D4AF37]/10",
+                                        done: "bg-zinc-900 border-white/5 text-zinc-500 opacity-60",
+                                        cancelled: "bg-red-500/10 border-red-500/20 text-red-400/40 line-through text-[9px]"
                                     };
 
                                     const s = statusStyles[appt.status as keyof typeof statusStyles] || statusStyles.pending;
@@ -106,7 +110,7 @@ export default function DayCalendar({ barbers, appointments, dateKey, onRefresh 
                     ))}
 
                     {barbers.length === 0 && (
-                        <div className="flex-1 flex items-center justify-center text-gray-400 w-full p-20">
+                        <div className="flex-1 flex items-center justify-center text-zinc-600 w-full p-20">
                             No hay profesionales activos.
                         </div>
                     )}

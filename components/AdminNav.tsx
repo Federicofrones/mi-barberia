@@ -32,16 +32,16 @@ export default function AdminNav() {
     return (
         <>
             {/* Mobile Header */}
-            <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-white border-b border-zinc-100 flex items-center justify-between px-6 z-50">
+            <div className="lg:hidden fixed top-0 left-0 right-0 h-16 bg-black border-b border-white/5 flex items-center justify-between px-6 z-50">
                 <div className="flex items-center gap-2">
-                    <div className="bg-black p-1.5 rounded-lg">
-                        <Scissors className="w-5 h-5 text-white" />
+                    <div className="bg-[#D4AF37] p-1.5 rounded-lg shadow-lg shadow-[#D4AF37]/20">
+                        <Scissors className="w-5 h-5 text-black" />
                     </div>
-                    <h1 className="text-xl font-black tracking-tighter">BARBER PRO</h1>
+                    <h1 className="text-xl font-black tracking-tighter text-white">BARBER PRO</h1>
                 </div>
                 <button
                     onClick={() => setIsOpen(!isOpen)}
-                    className="p-2 text-zinc-600 hover:bg-zinc-100 rounded-xl transition-all"
+                    className="p-2 text-zinc-400 hover:bg-zinc-900 rounded-xl transition-all"
                 >
                     {isOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
                 </button>
@@ -50,23 +50,23 @@ export default function AdminNav() {
             {/* Overlay */}
             {isOpen && (
                 <div
-                    className="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 lg:hidden"
+                    className="fixed inset-0 bg-black/80 backdrop-blur-md z-40 lg:hidden"
                     onClick={() => setIsOpen(false)}
                 />
             )}
 
             {/* Sidebar */}
             <aside className={`
-                w-72 bg-zinc-950 text-white h-full flex flex-col fixed inset-y-0 left-0 z-40
+                w-72 bg-black text-white h-full flex flex-col fixed inset-y-0 left-0 z-40
                 transition-transform duration-500 cubic-bezier(0.4, 0, 0.2, 1) transform border-r border-white/5
                 ${isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
             `}>
                 <div className="p-8 hidden lg:block">
                     <div className="flex items-center gap-3">
-                        <div className="bg-white p-2 rounded-xl">
+                        <div className="bg-[#D4AF37] p-2 rounded-xl shadow-xl shadow-[#D4AF37]/20">
                             <Scissors className="w-6 h-6 text-black" />
                         </div>
-                        <h1 className="text-2xl font-black tracking-tighter">BARBER PRO</h1>
+                        <h1 className="text-2xl font-black tracking-tighter text-white">BARBER PRO</h1>
                     </div>
                 </div>
 
@@ -80,7 +80,7 @@ export default function AdminNav() {
                                 onClick={() => setIsOpen(false)}
                                 className={`flex items-center gap-3 px-4 py-3 rounded-2xl text-sm font-bold transition-all duration-300 group
                                     ${active
-                                        ? 'bg-white text-black shadow-xl shadow-white/5'
+                                        ? 'bg-[#D4AF37] text-black shadow-xl shadow-[#D4AF37]/20'
                                         : 'text-zinc-500 hover:text-white hover:bg-white/5'
                                     }`}
                             >
@@ -99,8 +99,8 @@ export default function AdminNav() {
                         <LogOut className="w-5 h-5" />
                         Cerrar Sesión
                     </button>
-                    <p className="text-[10px] text-zinc-600 font-bold mt-6 text-center uppercase tracking-widest">
-                        v2.1 Premium Admin
+                    <p className="text-[10px] text-zinc-700 font-bold mt-6 text-center uppercase tracking-widest">
+                        v2.1 Gold Edition
                     </p>
                 </div>
             </aside>

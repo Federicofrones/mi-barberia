@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react';
 import { Card, Button, Input } from '@/components/ui';
+import { Clock, User, Scissors, Save, ChevronLeft } from 'lucide-react';
+import Link from 'next/link';
 
 export default function OverridesPage() {
     const [barbers, setBarbers] = useState<any[]>([]);
@@ -43,60 +45,87 @@ export default function OverridesPage() {
     const handleSave = async (barberId: string) => {
         const barber = barbers.find(b => b.id === barberId);
         try {
-            await fetch('/api/admin/overrides', {
+            const res = await fetch('/api/admin/overrides', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ id: barberId, overrides: barber.serviceOverrides || {} })
             });
-            alert('Excepciones guardadas exitosamente.');
+            if (res.ok) {
+                // Flash success or something
+            }
         } catch (e) {
-            alert('Error guardando');
+            console.error(e);
         }
     };
 
-    if (loading) return <p>Cargando configuraciones...</p>;
+    if (loading) return (
+        <div className="flex items-center justify-center p-20">
+            <div className="w-10 h-10 border-4 border-[#D4AF37]/20 border-t-[#D4AF37] rounded-full animate-spin" />
+        </div>
+    );
 
     return (
-        <div className="space-y-6 max-w-5xl">
-            <div className="flex justify-between items-center">
-                <h1 className="text-2xl font-bold">Excepciones por Barbero</h1>
+        <div className="space-y-8 max-w-6xl pb-20">
+            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div className="flex items-center gap-4">
+                    <Link href="/admin/staff" className="p-2 hover:bg-white/5 rounded-xl transition-colors">
+                        <ChevronLeft className="w-6 h-6 text-zinc-500" />
+                    </Link>
+                    <div>
+                        <h1 className="text-3xl font-black tracking-tighter text-white">Excepciones de Tiempo</h1>
+                        <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest mt-1">Configuración Individual</p>
+                    </div>
+                </div>
             </div>
-            <p className="text-gray-500 mb-6 text-sm">Modifica el tiempo que cada barbero se demora en un servicio. Si dejas el campo en blanco, se usará el tiempo base del servicio.</p>
 
-            {barbers.map(barber => (
-                <Card key={barber.id} className="mb-4">
-                    <div className="flex justify-between items-center mb-4 border-b border-gray-100 pb-2">
-                        <h2 className="text-lg font-bold">{barber.displayName}</h2>
-                        <Button className="max-w-[150px] text-xs py-1" onClick={() => handleSave(barber.id)}>
-                            Guardar para {barber.displayName.split(' ')[0]}
-                        </Button>
-                    </div>
+            <div className="bg-[#D4AF37]/5 p-6 rounded-[2rem] border border-[#D4AF37]/10 flex items-start gap-4 mb-8">
+                <div className="p-2 bg-[#D4AF37] rounded-xl shrink-0">
+                    <Clock className="w-5 h-5 text-black" />
+                </div>
+                <p className="text-sm text-[#D4AF37] font-medium leading-relaxed">
+                    Personaliza cuánto tiempo toma cada barbero para cada servicio. Si dejas el campo vacío, se usará el tiempo estándar del catálogo.
+                </p>
+            </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                        {services.map(srv => {
-                            const currentOverride = barber.serviceOverrides?.[srv.id]?.durationMin || '';
-                            return (
-                                <div key={srv.id} className="p-3 bg-gray-50 rounded-md border border-gray-100 flex justify-between items-center">
-                                    <div className="w-1/2 overflow-hidden text-ellipsis whitespace-nowrap text-sm font-medium pr-2 text-gray-700" title={srv.name}>
-                                        {srv.name}
-                                        <div className="text-xs text-gray-400 font-normal mt-0.5">Base: {srv.baseDurationMin}m</div>
+            <div className="space-y-12">
+                {barbers.map(barber => (
+                    <div key={barber.id} className="relative">
+                        <div className="flex items-center justify-between mb-6 px-4">
+                            <h2 className="text-xl font-black text-white flex items-center gap-3">
+                                <User className="w-5 h-5 text-[#D4AF37]" />
+                                {barber.displayName}
+                            </h2>
+                            <Button className="max-w-[200px] text-[10px] uppercase tracking-widest py-3 h-auto" onClick={() => handleSave(barber.id)}>
+                                <Save className="w-3.5 h-3.5 mr-2" />
+                                Guardar {barber.displayName.split(' ')[0]}
+                            </Button>
+                        </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            {services.map(srv => {
+                                const currentOverride = barber.serviceOverrides?.[srv.id]?.durationMin || '';
+                                return (
+                                    <div key={srv.id} className="p-5 bg-zinc-900/40 border border-white/5 rounded-3xl flex justify-between items-center group hover:bg-zinc-900 transition-all">
+                                        <div className="w-1/2 pr-2">
+                                            <p className="text-sm font-bold text-zinc-300 truncate" title={srv.name}>{srv.name}</p>
+                                            <p className="text-[10px] text-zinc-600 font-bold uppercase tracking-widest mt-1">Base: {srv.baseDurationMin}m</p>
+                                        </div>
+                                        <div className="w-1/3 relative">
+                                            <input
+                                                type="number"
+                                                placeholder="min"
+                                                value={currentOverride}
+                                                className="w-full bg-black border border-white/10 rounded-xl focus:border-[#D4AF37] focus:ring-4 focus:ring-[#D4AF37]/5 text-sm py-2 px-3 text-center text-white outline-none transition-all"
+                                                onChange={(e) => handleOverrideChange(barber.id, srv.id, e.target.value)}
+                                            />
+                                        </div>
                                     </div>
-                                    <div className="w-1/2">
-                                        <input
-                                            type="number"
-                                            placeholder="min"
-                                            value={currentOverride}
-                                            className="w-full border-gray-300 rounded focus:ring-black focus:border-black text-sm py-1.5 px-2 text-center"
-                                            onChange={(e) => handleOverrideChange(barber.id, srv.id, e.target.value)}
-                                        />
-                                    </div>
-                                </div>
-                            );
-                        })}
+                                );
+                            })}
+                        </div>
                     </div>
-                </Card>
-            ))}
-
+                ))}
+            </div>
         </div>
     );
 }

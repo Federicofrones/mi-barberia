@@ -16,7 +16,7 @@ export default function RootLayout({
 }) {
     return (
         <html lang="es" className="scroll-smooth">
-            <body className={`${outfit.className} antialiased min-h-screen bg-white text-zinc-900`}>
+            <body className={`${outfit.className} antialiased min-h-screen bg-black text-white`}>
                 {children}
             </body>
         </html>

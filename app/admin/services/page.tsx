@@ -52,13 +52,15 @@ export default function ServicesPage() {
             {/* Header Section */}
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-4">
                 <div>
-                    <h1 className="text-3xl font-black tracking-tight text-black flex items-center gap-3">
-                        <Scissors className="w-8 h-8" />
-                        Servicios y Precios
+                    <h1 className="text-4xl font-black tracking-tighter text-white flex items-center gap-4">
+                        <div className="p-3 bg-[#D4AF37] rounded-2xl shadow-xl shadow-[#D4AF37]/20">
+                            <Scissors className="w-8 h-8 text-black" />
+                        </div>
+                        Servicios & Precios
                     </h1>
-                    <p className="text-gray-500 mt-1">Configura tu catálogo de cortes y tratamientos.</p>
+                    <p className="text-zinc-500 mt-2 font-medium">Define los cortes y tratamientos de la casa.</p>
                 </div>
-                <Button onClick={createNew} className="flex items-center gap-2 px-8 shadow-lg shadow-black/10">
+                <Button onClick={createNew} className="flex items-center gap-2 px-10">
                     <Plus className="w-4 h-4" />
                     Nuevo Servicio
                 </Button>
@@ -66,21 +68,21 @@ export default function ServicesPage() {
 
             {/* Editing/Creation Modal */}
             {editingService && (
-                <div className="fixed inset-0 bg-black/40 backdrop-blur-md z-[100] flex items-center justify-center p-4">
-                    <Card className="w-full max-w-xl bg-white border-none shadow-2xl animate-in fade-in zoom-in duration-200">
+                <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center p-4">
+                    <Card className="w-full max-w-xl bg-zinc-900 border border-white/10 shadow-3xl animate-in fade-in zoom-in duration-300">
                         <div className="p-4">
-                            <div className="flex justify-between items-center mb-6">
-                                <h2 className="text-xl font-bold flex items-center gap-2">
-                                    <Settings2 className="w-5 h-5 text-zinc-400" />
+                            <div className="flex justify-between items-center mb-8">
+                                <h2 className="text-2xl font-black text-white flex items-center gap-3">
+                                    <Settings2 className="w-6 h-6 text-[#D4AF37]" />
                                     {editingService.id ? 'Editar Servicio' : 'Nuevo Servicio'}
                                 </h2>
-                                <button onClick={() => setEditingService(null)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                                    <XCircle className="w-6 h-6 text-gray-300" />
+                                <button onClick={() => setEditingService(null)} className="p-2 hover:bg-white/5 rounded-full transition-colors text-zinc-500 hover:text-white">
+                                    <XCircle className="w-8 h-8" />
                                 </button>
                             </div>
 
-                            <form onSubmit={handleSave} className="space-y-6">
-                                <div className="space-y-4">
+                            <form onSubmit={handleSave} className="space-y-8">
+                                <div className="space-y-6">
                                     <Input
                                         label="Nombre del Servicio"
                                         placeholder="Ej. Corte Clásico + Barba"
@@ -89,18 +91,16 @@ export default function ServicesPage() {
                                         required
                                     />
 
-                                    <div className="grid grid-cols-2 gap-4">
-                                        <div className="relative">
-                                            <Input
-                                                label="Precio al Cliente ($)"
-                                                type="number"
-                                                value={editingService.price}
-                                                onChange={(e: any) => setEditingService({ ...editingService, price: Number(e.target.value) })}
-                                                required
-                                            />
-                                        </div>
+                                    <div className="grid grid-cols-2 gap-6">
                                         <Input
-                                            label="Duración Base (min)"
+                                            label="Precio ($)"
+                                            type="number"
+                                            value={editingService.price}
+                                            onChange={(e: any) => setEditingService({ ...editingService, price: Number(e.target.value) })}
+                                            required
+                                        />
+                                        <Input
+                                            label="Duración (min)"
                                             type="number"
                                             value={editingService.baseDurationMin}
                                             onChange={(e: any) => setEditingService({ ...editingService, baseDurationMin: Number(e.target.value) })}
@@ -108,32 +108,32 @@ export default function ServicesPage() {
                                         />
                                     </div>
 
-                                    <div className="grid grid-cols-2 gap-4">
+                                    <div className="grid grid-cols-2 gap-6">
                                         <Input
-                                            label="Costo Insumos ($)"
+                                            label="Insumos ($)"
                                             type="number"
                                             value={editingService.serviceCost}
                                             onChange={(e: any) => setEditingService({ ...editingService, serviceCost: Number(e.target.value) })}
                                             required
                                         />
                                         <Select
-                                            label="Estado"
+                                            label="Estatus"
                                             value={editingService.isActive ? "true" : "false"}
                                             onChange={(e: any) => setEditingService({ ...editingService, isActive: e.target.value === "true" })}
                                         >
-                                            <option value="true">Activo</option>
-                                            <option value="false">Pausado</option>
+                                            <option value="true" className="bg-zinc-900">Activo</option>
+                                            <option value="false" className="bg-zinc-900">Pausado</option>
                                         </Select>
                                     </div>
                                 </div>
 
-                                <div className="bg-gray-50 p-4 rounded-2xl border border-gray-100 text-[10px] text-gray-500 font-medium">
+                                <div className="bg-[#D4AF37]/5 p-6 rounded-[2rem] border border-[#D4AF37]/10 text-xs text-[#D4AF37] font-medium leading-relaxed">
                                     Nota: Los barberos pueden tener duraciones personalizadas para estos servicios configuradas en su perfil individual.
                                 </div>
 
-                                <div className="flex gap-3 justify-end pt-4 border-t">
-                                    <Button type="button" variant="outline" onClick={() => setEditingService(null)} className="px-6">Cancelar</Button>
-                                    <Button type="submit" className="px-10 bg-black text-white hover:bg-zinc-800">Guardar Servicio</Button>
+                                <div className="flex gap-4 justify-end pt-6 border-t border-white/5">
+                                    <Button type="button" variant="outline" onClick={() => setEditingService(null)} className="px-10">Cancelar</Button>
+                                    <Button type="submit" className="px-12 bg-[#D4AF37] text-black">Guardar Cambios</Button>
                                 </div>
                             </form>
                         </div>
@@ -143,70 +143,70 @@ export default function ServicesPage() {
 
             {/* Services Grid/List */}
             {loading ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     {[1, 2, 3, 4].map(i => (
-                        <div key={i} className="h-32 bg-gray-100 rounded-3xl animate-pulse" />
+                        <div key={i} className="h-40 bg-zinc-900/50 rounded-[2.5rem] animate-pulse" />
                     ))}
                 </div>
             ) : (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
                     {services.length === 0 ? (
-                        <div className="col-span-full py-20 text-center bg-gray-50 rounded-[2.5rem] mt-10 border-2 border-dashed border-gray-200">
-                            <Briefcase className="w-12 h-12 text-gray-300 mx-auto mb-4" />
-                            <p className="text-gray-500 font-medium font-bold">Aún no has creado servicios.</p>
-                            <Button variant="outline" onClick={createNew} className="mt-4">Crear el primero</Button>
+                        <div className="col-span-full py-32 text-center bg-zinc-900/30 rounded-[3rem] border border-dashed border-white/5">
+                            <Briefcase className="w-20 h-20 text-zinc-800 mx-auto mb-6" />
+                            <p className="text-zinc-500 font-bold text-xl">Tu catálogo está vacío.</p>
+                            <Button variant="outline" onClick={createNew} className="mt-6 max-w-xs mx-auto">Empezar ahora</Button>
                         </div>
                     ) : services.map(s => (
                         <div
                             key={s.id}
                             onClick={() => edit(s)}
-                            className={`group relative bg-white border border-gray-100 rounded-[2rem] p-6 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden ${!s.isActive && 'opacity-60 grayscale'}`}
+                            className={`group relative bg-zinc-900/40 border border-white/5 rounded-[2.5rem] p-8 shadow-2xl hover:bg-zinc-900 transition-all duration-500 cursor-pointer overflow-hidden ${!s.isActive && 'opacity-60 grayscale'}`}
                         >
-                            <div className="flex justify-between items-start mb-4">
-                                <div className="flex items-center gap-4">
-                                    <div className="w-12 h-12 rounded-2xl bg-zinc-50 border border-zinc-100 flex items-center justify-center group-hover:bg-black group-hover:text-white transition-colors duration-500">
-                                        <Scissors className="w-5 h-5" />
+                            <div className="flex justify-between items-start mb-6">
+                                <div className="flex items-center gap-5">
+                                    <div className="w-16 h-16 rounded-[1.5rem] bg-black border border-white/5 flex items-center justify-center group-hover:bg-[#D4AF37] group-hover:text-black transition-all duration-500">
+                                        <Scissors className="w-7 h-7" />
                                     </div>
                                     <div>
-                                        <h3 className="font-black text-lg text-black">{s.name}</h3>
-                                        <p className="text-[10px] text-gray-400 font-bold uppercase tracking-widest flex items-center gap-1">
-                                            <Clock className="w-2.5 h-2.5" />
+                                        <h3 className="font-black text-2xl text-white tracking-tight">{s.name}</h3>
+                                        <p className="text-[10px] text-zinc-500 font-black uppercase tracking-widest flex items-center gap-1.5 mt-1">
+                                            <Clock className="w-3 h-3" />
                                             {s.baseDurationMin} minutos base
                                         </p>
                                     </div>
                                 </div>
                                 <div className="text-right">
-                                    <p className="text-2xl font-black text-black tracking-tighter">${s.price}</p>
-                                    <p className="text-[9px] text-green-600 font-bold uppercase">Precio Venta</p>
+                                    <p className="text-3xl font-black text-white tracking-tighter">${s.price}</p>
+                                    <p className="text-[10px] text-[#D4AF37] font-black uppercase tracking-widest">Publicado</p>
                                 </div>
                             </div>
 
-                            <div className="flex items-center justify-between mt-6 pt-4 border-t border-gray-50">
-                                <div className="flex gap-4">
+                            <div className="flex items-center justify-between mt-8 pt-6 border-t border-white/5">
+                                <div className="flex gap-8">
                                     <div className="flex flex-col">
-                                        <span className="text-[8px] text-gray-400 font-black uppercase tracking-widest">Insumos</span>
-                                        <span className="text-xs font-bold text-gray-600">${s.serviceCost}</span>
+                                        <span className="text-[9px] text-zinc-600 font-black uppercase tracking-widest mb-1">Costo</span>
+                                        <span className="text-sm font-black text-zinc-400">${s.serviceCost}</span>
                                     </div>
                                     <div className="flex flex-col">
-                                        <span className="text-[8px] text-gray-400 font-black uppercase tracking-widest">Utilidad Est.</span>
-                                        <span className="text-xs font-bold text-zinc-900">${s.price - s.serviceCost}</span>
+                                        <span className="text-[9px] text-zinc-600 font-black uppercase tracking-widest mb-1">Margen</span>
+                                        <span className="text-sm font-black text-white">${s.price - s.serviceCost}</span>
                                     </div>
                                 </div>
 
-                                <div className={`flex items-center gap-1.5 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-tighter
-                                    ${s.isActive ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-400'}`}>
+                                <div className={`flex items-center gap-2 px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest
+                                    ${s.isActive ? 'bg-green-500/10 text-green-400' : 'bg-red-500/10 text-red-400'}`}>
                                     {s.isActive ? (
-                                        <><CheckCircle2 className="w-3 h-3" /> Activo</>
+                                        <><CheckCircle2 className="w-3.5 h-3.5" /> Activo</>
                                     ) : (
-                                        <><XCircle className="w-3 h-3" /> Pausado</>
+                                        <><XCircle className="w-3.5 h-3.5" /> Pausado</>
                                     )}
                                 </div>
                             </div>
 
                             {/* Edit Hint on Hover */}
-                            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                                <div className="bg-black text-white p-2 rounded-full">
-                                    <PenTool className="w-3 h-3" />
+                            <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                                <div className="bg-[#D4AF37] text-black p-2.5 rounded-2xl shadow-xl">
+                                    <PenTool className="w-4 h-4" />
                                 </div>
                             </div>
                         </div>

@@ -29,11 +29,19 @@ export default function LoginPage() {
                 body: JSON.stringify({ idToken })
             });
 
+            const data = await res.json();
+
             if (!res.ok) {
-                throw new Error('Access Denied');
+                throw new Error(data.error || 'Access Denied');
             }
 
-            router.push('/admin');
+            if (data.role === 'admin') {
+                router.push('/admin');
+            } else if (data.role === 'barber') {
+                router.push('/barber');
+            } else {
+                router.push('/');
+            }
         } catch (err: any) {
             console.error(err);
             setError('Credenciales inválidas o sin acceso.');

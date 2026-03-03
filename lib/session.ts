@@ -5,10 +5,10 @@ import { NextRequest } from "next/server";
 const secretKey = process.env.SESSION_SECRET || "default-secret-very-unsecure-123456";
 const key = new TextEncoder().encode(secretKey);
 
-export async function createSessionCookie(uid: string, expDays: number = 7) {
+export async function createSessionCookie(payload: { uid: string, role: string, barberId?: string }, expDays: number = 7) {
     const expires = new Date(Date.now() + expDays * 24 * 60 * 60 * 1000);
 
-    const token = await new SignJWT({ uid })
+    const token = await new SignJWT(payload)
         .setProtectedHeader({ alg: "HS256" })
         .setIssuedAt()
         .setExpirationTime(expDays + "d")

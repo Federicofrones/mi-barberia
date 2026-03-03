@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
 import { adminDb } from '@/lib/firebase/admin';
-import { requireAdminSession } from '@/lib/apiAuth';
+import { requireBarberSession } from '@/lib/apiAuth';
 import { globalConfig } from '@/lib/config';
 import { Appointment, Barber, Payment, DailyStats, BarberDailyStats, ShopConfig } from '@/lib/models/types';
 import { calculateCommission } from '@/lib/models/math';
@@ -12,20 +12,25 @@ import { z } from 'zod';
 const PaySchema = z.object({
     appointmentId: z.string().min(1),
     method: z.enum(['cash', 'card', 'transfer']),
+    paymentMethod: z.enum(['cash', 'card', 'transfer']).optional(), // Support both names
     discount: z.number().min(0).default(0),
     tip: z.number().min(0).default(0),
 });
 
 export async function POST(request: Request) {
     try {
-        const session = await requireAdminSession(request as any);
+        const session = await requireBarberSession(request as any) as any;
         if (!session) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
         const body = await request.json();
         const parsed = PaySchema.safeParse(body);
         if (!parsed.success) return NextResponse.json({ error: "Datos inválidos" }, { status: 400 });
 
-        const { appointmentId, method, discount, tip } = parsed.data;
+        const { appointmentId, discount, tip } = parsed.data;
+        const method = parsed.data.method || parsed.data.paymentMethod;
+
+        if (!method) return NextResponse.json({ error: "Método de pago requerido" }, { status: 400 });
+
         const shopRef = adminDb.collection('shops').doc(globalConfig.shopId);
 
         await adminDb.runTransaction(async (t) => {
@@ -34,6 +39,11 @@ export async function POST(request: Request) {
 
             if (!appSnap.exists) throw new Error("Turno no encontrado");
             const appointment = appSnap.data() as Appointment;
+
+            // Security check: Barbers can only close THEIR appointments
+            if (session.role === 'barber' && appointment.barberId !== session.barberId) {
+                throw new Error("No tienes permiso para cerrar este turno");
+            }
 
             if (appointment.status === 'done' || appointment.status === 'cancelled') {
                 throw new Error(`Turno ya procesado (${appointment.status})`);

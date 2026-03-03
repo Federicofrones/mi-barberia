@@ -71,7 +71,7 @@ export default function BarberFeedback() {
                                 </div>
                             </div>
                             <p className="text-zinc-400 text-sm italic leading-relaxed bg-black/20 p-5 rounded-2xl border border-white/5">
-                                "{review.comment || "Corte impecable, gran atención profesional."}"
+                                &quot;{review.comment || "Corte impecable, gran atención profesional."}&quot;
                             </p>
                             {review.rating === 5 && (
                                 <div className="mt-4 flex items-center gap-2 px-3 py-1 bg-green-500/10 border border-green-500/20 rounded-full w-fit">

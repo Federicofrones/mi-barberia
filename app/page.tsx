@@ -36,7 +36,7 @@ function Gallery({ images }: { images: string[] }) {
                         className={`absolute inset-0 transition-all duration-1000 ease-in-out ${idx === currentIndex ? 'opacity-100 scale-100 rotate-0' : 'opacity-0 scale-110 rotate-1'
                             }`}
                     >
-                        <img src={img} alt="Gallery" className="w-full h-full object-cover" />
+                        <img src={img} alt={`Gallery image ${idx + 1}`} className="w-full h-full object-cover" />
                         <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/20" />
                     </div>
                 ))}
@@ -169,7 +169,7 @@ export default function Home() {
                                             <Star key={s} className={`w-3 h-3 ${r.rating >= s ? 'text-[#D4AF37] fill-[#D4AF37]' : 'text-zinc-800'}`} />
                                         ))}
                                     </div>
-                                    <p className="text-zinc-400 text-sm italic mb-6 relative z-10 line-clamp-3">"{r.comment || "Excelente atención y mi corte quedó perfecto."}"</p>
+                                    <p className="text-zinc-400 text-sm italic mb-6 relative z-10 line-clamp-3">&quot;{r.comment || "Excelente atención y mi corte quedó perfecto."}&quot;</p>
                                     <div className="flex items-center justify-between border-t border-white/5 pt-4">
                                         <div>
                                             <p className="text-white font-black uppercase text-[10px] tracking-widest italic">{r.clientName}</p>

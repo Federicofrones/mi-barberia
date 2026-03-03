@@ -125,7 +125,7 @@ export default function BrandingPage() {
                         {branding.gallery.map((url, idx) => (
                             <div key={idx} className="flex gap-4 items-end bg-black/20 p-4 rounded-3xl border border-white/5">
                                 <div className="w-20 h-20 rounded-xl overflow-hidden bg-black flex-shrink-0 border border-white/5">
-                                    {url ? <img src={url} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-4 h-4 text-zinc-800" /></div>}
+                                    {url ? <img src={url} alt={`Gallery preview ${idx + 1}`} className="w-full h-full object-cover" /> : <div className="w-full h-full flex items-center justify-center"><ImageIcon className="w-4 h-4 text-zinc-800" /></div>}
                                 </div>
                                 <div className="flex-1">
                                     <Input

@@ -20,11 +20,20 @@ export async function GET(request: Request) {
                     '/gallery/4.png',
                     '/gallery/5.png',
                     '/gallery/6.png',
-                ]
+                ],
+                heroSubtitle: 'Nuestro Santuario',
+                heroTitle1: 'EL ARTE DE LA',
+                heroTitle2: 'PRECISIÓN'
             });
         }
 
-        return NextResponse.json(brandingDoc.data());
+        const data = brandingDoc.data() || {};
+        return NextResponse.json({
+            ...data,
+            heroSubtitle: data.heroSubtitle || 'Nuestro Santuario',
+            heroTitle1: data.heroTitle1 || 'EL ARTE DE LA',
+            heroTitle2: data.heroTitle2 || 'PRECISIÓN'
+        });
     } catch (error: any) {
         return NextResponse.json({ error: "Error" }, { status: 500 });
     }

@@ -13,7 +13,7 @@ const DEFAULT_GALLERY = [
     '/gallery/6.png',
 ];
 
-function Gallery({ images }: { images: string[] }) {
+function Gallery({ images, subtitle = "Nuestro Santuario", title1 = "EL ARTE DE LA", title2 = "PRECISIÓN" }: { images: string[], subtitle?: string, title1?: string, title2?: string }) {
     const [currentIndex, setCurrentIndex] = useState(0);
     const displayImages = images && images.length > 0 ? images.filter(i => i !== '') : DEFAULT_GALLERY;
 
@@ -59,9 +59,9 @@ function Gallery({ images }: { images: string[] }) {
                 <div className="absolute bottom-10 left-8 md:bottom-14 md:left-12 z-20">
                     <div className="flex flex-col gap-2 items-start">
                         <div className="h-px w-8 bg-[#D4AF37]/50 mb-1" />
-                        <p className="text-[9px] font-medium uppercase tracking-[0.6em] text-[#D4AF37]/90">Nuestro Santuario</p>
+                        <p className="text-[9px] font-medium uppercase tracking-[0.6em] text-[#D4AF37]/90">{subtitle}</p>
                         <h2 className="text-2xl md:text-4xl font-extralight italic text-white tracking-widest leading-none">
-                            EL ARTE DE LA <span className="font-black not-italic text-white">PRECISIÓN</span>
+                            {title1} <span className="font-black not-italic text-white">{title2}</span>
                         </h2>
                     </div>
                 </div>
@@ -131,7 +131,12 @@ export default function Home() {
                 </div>
 
                 {/* Gallery Section */}
-                <Gallery images={gallery} />
+                <Gallery
+                    images={gallery}
+                    subtitle={branding?.heroSubtitle}
+                    title1={branding?.heroTitle1}
+                    title2={branding?.heroTitle2}
+                />
 
                 {/* Info Grid */}
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-12 w-full border-y border-white/5 py-16 mb-32">

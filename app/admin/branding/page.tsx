@@ -5,9 +5,12 @@ import { Card, Input, Button } from '@/components/ui';
 import { Camera, Image as ImageIcon, Save, Plus, Trash2, Globe } from 'lucide-react';
 
 export default function BrandingPage() {
-    const [branding, setBranding] = useState<{ logoUrl: string, gallery: string[] }>({
+    const [branding, setBranding] = useState<{ logoUrl: string, gallery: string[], heroSubtitle?: string, heroTitle1?: string, heroTitle2?: string }>({
         logoUrl: '',
-        gallery: []
+        gallery: [],
+        heroSubtitle: 'Nuestro Santuario',
+        heroTitle1: 'EL ARTE DE LA',
+        heroTitle2: 'PRECISIÓN'
     });
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
@@ -143,6 +146,40 @@ export default function BrandingPage() {
                                 </button>
                             </div>
                         ))}
+                    </div>
+                </Card>
+
+                {/* Text Section */}
+                <Card className="md:col-span-3 p-8 bg-zinc-900/40 border-white/5 space-y-8 rounded-[2.5rem]">
+                    <div className="space-y-2">
+                        <h2 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-2">
+                            <Globe className="w-4 h-4 text-[#D4AF37]" /> Textos de Portada
+                        </h2>
+                        <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-wider">Personaliza el mensaje principal sobre las fotos de galería. Mantén textos cortos por estética y mobile.</p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <Input
+                            label="Subtítulo Superior"
+                            placeholder=" Nuestro Santuario"
+                            maxLength={40}
+                            value={branding.heroSubtitle || ''}
+                            onChange={(e: any) => setBranding({ ...branding, heroSubtitle: e.target.value })}
+                        />
+                        <Input
+                            label="Título (Fino)"
+                            placeholder="EL ARTE DE LA"
+                            maxLength={25}
+                            value={branding.heroTitle1 || ''}
+                            onChange={(e: any) => setBranding({ ...branding, heroTitle1: e.target.value })}
+                        />
+                        <Input
+                            label="Palabra Destacada (Negrita)"
+                            placeholder="PRECISIÓN"
+                            maxLength={15}
+                            value={branding.heroTitle2 || ''}
+                            onChange={(e: any) => setBranding({ ...branding, heroTitle2: e.target.value })}
+                        />
                     </div>
                 </Card>
             </div>

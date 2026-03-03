@@ -56,9 +56,14 @@ function Gallery({ images }: { images: string[] }) {
                 )}
 
                 {/* Overlay Text */}
-                <div className="absolute inset-x-8 bottom-12 md:inset-x-16 md:bottom-16 z-10">
-                    <p className="text-[10px] font-black uppercase tracking-[0.4em] text-[#D4AF37] mb-2">Nuestro Santuario</p>
-                    <h2 className="text-3xl md:text-5xl font-black italic text-white tracking-tighter shadow-black drop-shadow-lg">EL ARTE DE LA <br /> PRECISIÓN</h2>
+                <div className="absolute bottom-10 left-8 md:bottom-14 md:left-12 z-20">
+                    <div className="flex flex-col gap-2 items-start">
+                        <div className="h-px w-8 bg-[#D4AF37]/50 mb-1" />
+                        <p className="text-[9px] font-medium uppercase tracking-[0.6em] text-[#D4AF37]/90">Nuestro Santuario</p>
+                        <h2 className="text-2xl md:text-4xl font-extralight italic text-white tracking-widest leading-none">
+                            EL ARTE DE LA <span className="font-black not-italic text-white">PRECISIÓN</span>
+                        </h2>
+                    </div>
                 </div>
             </div>
         </div>

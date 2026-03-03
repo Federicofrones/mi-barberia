@@ -153,7 +153,7 @@ export default function StaffPage() {
             {/* Editing/Creation Form */}
             {editing && (
                 <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center p-4">
-                    <Card className="w-full max-w-4xl bg-zinc-900 border border-white/10 shadow-3xl animate-in fade-in zoom-in duration-300 max-h-[95vh] overflow-y-auto">
+                    <Card className="w-full max-w-4xl bg-zinc-900 border border-white/10 shadow-3xl animate-in fade-in zoom-in duration-300 max-h-[95vh] overflow-y-auto no-scrollbar">
                         <div className="p-6 md:p-10">
                             <div className="flex justify-between items-center mb-10">
                                 <h2 className="text-3xl font-black text-white italic tracking-tighter uppercase">

@@ -110,7 +110,7 @@ export default function StaffPage() {
             {/* Editing/Creation Form */}
             {editing && (
                 <div className="fixed inset-0 bg-black/80 backdrop-blur-md z-[100] flex items-center justify-center p-4">
-                    <Card className="w-full max-w-2xl bg-zinc-900 border border-white/10 shadow-3xl animate-in fade-in zoom-in duration-300 max-h-[90vh] overflow-y-auto">
+                    <Card className="w-full max-w-4xl bg-zinc-900 border border-white/10 shadow-3xl animate-in fade-in zoom-in duration-300 max-h-[95vh] overflow-y-auto">
                         <div className="p-6 md:p-10">
                             <div className="flex justify-between items-center mb-10">
                                 <h2 className="text-3xl font-black text-white italic tracking-tighter uppercase">
@@ -125,11 +125,70 @@ export default function StaffPage() {
                             </div>
 
                             <form onSubmit={handleSave} className="space-y-10 pb-4">
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-10">
+                                    {/* Imagen de Perfil - Ancho Completo Superior */}
+                                    <div className="bg-zinc-800/30 p-8 md:p-12 rounded-[3rem] border border-white/5 space-y-8 md:col-span-2">
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <div className="w-1.5 h-4 bg-[#D4AF37] rounded-full" />
+                                            <h3 className="text-xs font-black text-white uppercase tracking-[0.4em]">Imagen de Perfil</h3>
+                                        </div>
+
+                                        <div className="flex flex-col lg:flex-row items-center gap-12">
+                                            <div className="relative group shrink-0">
+                                                <div className="absolute inset-0 bg-[#D4AF37] rounded-[3rem] blur-2xl opacity-0 group-hover:opacity-20 transition-opacity duration-500" />
+                                                <div className={`relative w-48 h-48 rounded-[3rem] flex items-center justify-center text-6xl font-black shadow-3xl overflow-hidden border-2 transition-all duration-500 ${editing.photoUrl ? 'border-[#D4AF37]/50' : 'bg-zinc-900 border-white/5 text-zinc-800'}`}>
+                                                    {editing.photoUrl ? (
+                                                        <img src={editing.photoUrl} alt="Preview" className="w-full h-full object-cover" />
+                                                    ) : (editing.displayName?.charAt(0) || '?')}
+
+                                                    <label className="absolute inset-0 bg-black/70 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center cursor-pointer transition-all duration-300 backdrop-blur-md">
+                                                        <Plus className="w-10 h-10 text-[#D4AF37] mb-2" />
+                                                        <span className="text-[10px] font-black uppercase text-white tracking-widest">Cambiar Imagen</span>
+                                                        <input
+                                                            type="file"
+                                                            accept="image/*"
+                                                            onChange={handleImageUpload}
+                                                            className="hidden"
+                                                        />
+                                                    </label>
+                                                </div>
+                                            </div>
+
+                                            <div className="flex-1 w-full grid grid-cols-1 sm:grid-cols-2 gap-8">
+                                                <div className="space-y-3">
+                                                    <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Subir Archivo Local</label>
+                                                    <div className="relative">
+                                                        <input
+                                                            type="file"
+                                                            accept="image/*"
+                                                            onChange={handleImageUpload}
+                                                            className="w-full text-[10px] text-zinc-500 file:mr-4 file:py-3 file:px-6 file:rounded-2xl file:border-0 file:text-[10px] file:font-black file:uppercase file:tracking-widest file:bg-zinc-800 file:text-[#D4AF37] hover:file:bg-zinc-700 cursor-pointer transition-all border border-white/5 rounded-2xl p-2 bg-black/40"
+                                                        />
+                                                    </div>
+                                                </div>
+                                                <div className="space-y-3">
+                                                    <label className="text-[10px] font-black text-zinc-500 uppercase tracking-widest ml-1">Enlace Directo (URL)</label>
+                                                    <Input
+                                                        placeholder="https://images.unsplash.com/..."
+                                                        value={editing.photoUrl || ''}
+                                                        onChange={(e: any) => setEditing({ ...editing, photoUrl: e.target.value })}
+                                                        className="bg-black/40 border-white/5 h-12"
+                                                    />
+                                                </div>
+                                                <div className="sm:col-span-2">
+                                                    <p className="text-[9px] font-bold text-zinc-600 uppercase tracking-widest bg-black/20 py-2 px-4 rounded-full inline-block">
+                                                        Resolución recomendada: 800x800px • Formato JPG/PNG/WEBP • Max 10MB
+                                                    </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Perfil Público */}
                                     <div className="space-y-8">
-                                        <h3 className="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.3em] inline-flex items-center gap-2">
-                                            <div className="w-1 h-3 bg-[#D4AF37] rounded-full" />
-                                            Perfil Público
+                                        <h3 className="text-[10px] font-black text-[#D4AF37] uppercase tracking-[0.4em] inline-flex items-center gap-2">
+                                            <div className="w-1.5 h-3 bg-[#D4AF37] rounded-full" />
+                                            Información Personal
                                         </h3>
                                         <Input
                                             label="Nombre Artístico"
@@ -138,58 +197,7 @@ export default function StaffPage() {
                                             onChange={(e: any) => setEditing({ ...editing, displayName: e.target.value })}
                                             required
                                         />
-                                        <div className="bg-zinc-800/30 p-8 rounded-[2.5rem] border border-white/5 space-y-6 md:col-span-2">
-                                            <div className="flex items-center gap-2 mb-2">
-                                                <div className="w-1 h-3 bg-[#D4AF37] rounded-full" />
-                                                <h3 className="text-[10px] font-black text-white uppercase tracking-[0.3em]">Imagen de Perfil</h3>
-                                            </div>
 
-                                            <div className="flex flex-col md:flex-row items-center gap-10">
-                                                <div className="relative group shrink-0">
-                                                    <div className="absolute inset-0 bg-[#D4AF37] rounded-[2.5rem] blur-xl opacity-0 group-hover:opacity-20 transition-opacity duration-500" />
-                                                    <div className={`relative w-40 h-40 rounded-[2.5rem] flex items-center justify-center text-5xl font-black shadow-2xl overflow-hidden border-2 transition-all duration-500 ${editing.photoUrl ? 'border-[#D4AF37]/50' : 'bg-zinc-900 border-white/5 text-zinc-700'}`}>
-                                                        {editing.photoUrl ? (
-                                                            <img src={editing.photoUrl} alt="Preview" className="w-full h-full object-cover" />
-                                                        ) : (editing.displayName?.charAt(0) || '?')}
-
-                                                        <label className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex flex-col items-center justify-center cursor-pointer transition-all duration-300 backdrop-blur-sm">
-                                                            <Plus className="w-8 h-8 text-[#D4AF37] mb-1" />
-                                                            <span className="text-[8px] font-black uppercase text-white tracking-widest">Cambiar</span>
-                                                            <input
-                                                                type="file"
-                                                                accept="image/*"
-                                                                onChange={handleImageUpload}
-                                                                className="hidden"
-                                                            />
-                                                        </label>
-                                                    </div>
-                                                </div>
-
-                                                <div className="flex-1 w-full grid grid-cols-1 sm:grid-cols-2 gap-6">
-                                                    <div className="space-y-2">
-                                                        <label className="text-[9px] font-black text-zinc-600 uppercase tracking-widest ml-1">Cargar Archivo</label>
-                                                        <input
-                                                            type="file"
-                                                            accept="image/*"
-                                                            onChange={handleImageUpload}
-                                                            className="w-full text-xs text-zinc-400 file:mr-4 file:py-2.5 file:px-6 file:rounded-xl file:border-0 file:text-[10px] file:font-black file:uppercase file:tracking-widest file:bg-zinc-800 file:text-[#D4AF37] hover:file:bg-zinc-700 cursor-pointer transition-all border border-white/5 rounded-2xl p-2 bg-zinc-900/50"
-                                                        />
-                                                    </div>
-                                                    <div className="space-y-2">
-                                                        <label className="text-[9px] font-black text-zinc-600 uppercase tracking-widest ml-1">O URL Directa</label>
-                                                        <Input
-                                                            placeholder="https://images.unsplash.com/..."
-                                                            value={editing.photoUrl || ''}
-                                                            onChange={(e: any) => setEditing({ ...editing, photoUrl: e.target.value })}
-                                                            className="bg-zinc-900/50"
-                                                        />
-                                                    </div>
-                                                    <div className="sm:col-span-2">
-                                                        <p className="text-[8px] font-medium text-zinc-500 uppercase tracking-widest">Recomendado: Imagen cuadrada de alta resolución (Max 10MB)</p>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
                                         <div className="grid grid-cols-2 gap-4">
                                             <Input
                                                 label="Orden en Lista"

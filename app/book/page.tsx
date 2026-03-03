@@ -204,14 +204,14 @@ function BookWizardContent() {
                                 <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest mt-1">Selecciona una fecha disponible</p>
                             </div>
 
-                            <div className="w-full relative">
+                            <div className="w-full relative px-1">
                                 <Input
                                     label="Fecha del Turno"
                                     type="date"
                                     min={new Date().toISOString().split('T')[0]}
                                     value={selectedDate}
                                     onChange={(e: any) => setSelectedDate(e.target.value)}
-                                    className="text-lg py-5 bg-black border-white/10 text-[#D4AF37] w-full"
+                                    className="text-base py-3 bg-black border-white/10 text-[#D4AF37] w-full"
                                 />
                             </div>
 
